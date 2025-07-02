@@ -1,0 +1,30 @@
+PREFIX schema: <http://schema.org/>
+PREFIX sdo: <https://schema.org/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+
+CONSTRUCT {
+  [] a sdo:ArchivalObject ;
+     sdo:name ?subject ;
+     sdo:identifier ?identifier ;
+     sdo:imageUrl ?imageUrl .
+}
+WHERE {
+  {
+    SELECT ?subject (SAMPLE(?imageUrl_) AS ?imageUrl) ?identifier
+    WHERE {
+      {
+        SELECT ?subject ?imageUrl_ 
+               (REPLACE(LCASE(STR(?subject)), " ", "-") AS ?identifier)
+        WHERE {
+          ?heritageObject a schema:Photograph ;
+            schema:thumbnail ?imageUrl_ ;
+            dc:subject ?subject .
+          FILTER(?subject IN ("luchtfotografie", "bombardement", "Bevrijding", "Meidagen 1940"))
+        }
+        ORDER BY RAND()
+      }
+    }
+    GROUP BY ?subject ?identifier
+  }
+}
+LIMIT 100

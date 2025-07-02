@@ -1,0 +1,23 @@
+PREFIX schema: <http://schema.org/>
+PREFIX sdo: <https://schema.org/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+construct {
+	?heritageObject a sdo:ArchivalObject ; sdo:name ?name; sdo:description ?description; sdo:dateCreated ?dateCreated; sdo:imageUrl ?imageUrl .
+} where {
+  select 
+	?heritageObject 
+	(sample(?_name) as ?name) 
+	(sample(?_description) as ?description)
+	(sample(?_dateCreated) as ?dateCreated)
+	(sample(?_imageUrl) as ?imageUrl)
+  where { 
+	?heritageObject a schema:Photograph; 
+	  dc:date ?date; 
+	  schema:thumbnail ?_imageUrl; 
+	  dc:title ?_name; 
+	  dc:description ?_description ;
+    dc:subject ?subject .
+    filter(?subject = 'Meidagen 1940')
+    #{ITEM_FILTER}
+   } group by ?heritageObject limit 100
+ }

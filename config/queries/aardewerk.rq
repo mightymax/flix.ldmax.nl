@@ -1,0 +1,25 @@
+prefix sdo: <https://schema.org/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+prefix Schelpen: <http://n2t.net/ark:/58489/0dd8886d-e607-4f2e-84e1-66d7798b3516>
+prefix Aardewerk: <http://n2t.net/ark:/58489/bebe871c-d7dd-4e66-ba6e-353c1785f0b3>
+construct {
+	?heritageObject a sdo:ArchivalObject ; sdo:name ?name; sdo:description ?description; sdo:dateCreated ?dateCreated; sdo:imageUrl ?imageUrl .
+} where {
+	select 
+	  ?heritageObject 
+	  (sample(?_name) as ?name) 
+	  (sample(?_description) as ?description)
+	  (sample(?_dateCreated) as ?dateCreated)
+	  (sample(?_imageUrl) as ?imageUrl)
+	where { 
+	  ?heritageObject a sdo:ArchiveComponent; 
+	    sdo:name ?_name; sdo:dateCreated ?_dateCreated.
+	  optional {
+	    ?heritageObject sdo:description ?_description .
+	  } 
+	  ?heritageObject sdo:associatedMedia ?media . 
+	  ?media sdo:thumbnailUrl ?_imageUrl .
+	  ?heritageObject sdo:material Aardewerk: .
+	}
+	group by ?heritageObject
+}

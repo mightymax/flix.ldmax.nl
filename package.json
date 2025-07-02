@@ -1,6 +1,11 @@
 {
-	"name": "flix",
+	"name": "flix.ldmax.nl",
+	"description": "Enspired by the [NDE Heritage FLix](https://github.com/netwerk-digitaal-erfgoed/heritageflix), this project aims to create a simple but visualy attractive website using SPARQL queries.",
 	"private": true,
+	"author": {
+		"name": "Mark Lindeman",
+		"email": "mark@lindeman.it"
+	},
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
@@ -20,8 +25,13 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/typography": "^0.5.15",
 		"@tailwindcss/vite": "^4.0.0",
+		"@types/n3": "^1.26.0",
+		"@types/rdf-ext": "^2.5.2",
+		"@types/sparqljs": "^3.1.12",
 		"eslint": "^9.18.0",
 		"eslint-plugin-svelte": "^3.0.0",
+		"flowbite": "^3.1.2",
+		"flowbite-svelte": "^1.8.1",
 		"globals": "^16.0.0",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
@@ -29,5 +39,15 @@
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
 		"vite": "^6.2.6"
+	},
+	"dependencies": {
+		"@comunica/query-sparql": "^4.3.0",
+		"@rdfjs/data-model": "^2.1.1",
+		"@sveltejs/adapter-node": "^5.2.12",
+		"flowbite-svelte-icons": "^2.2.1",
+		"marked": "^15.0.12",
+		"n3": "^1.26.0",
+		"rdf-ext": "^2.5.2",
+		"sparqljs": "^3.7.3"
 	}
 }
