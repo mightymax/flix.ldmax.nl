@@ -1,5 +1,5 @@
 # LDMax SPARQL Flix
-Inspired by the [NDE Heritage FLix](https://github.com/netwerk-digitaal-erfgoed/heritageflix), this project aims to create a simple but visualy attractive website using SPARQL queries. Although this projectes uses [LDMax](https://ldmax.nl) SPARQL endpoints, you can build your own Flix using any publicaly available SPARQL endpoint. The configuration if the entire project is done in RDF, see the [./config/config.exampl.nl](example configuration).
+Inspired by the [NDE Heritage FLix](https://github.com/netwerk-digitaal-erfgoed/heritageflix), this project aims to create a simple but visualy attractive website using SPARQL queries. Although this projectes uses [LDMax](https://ldmax.nl) SPARQL endpoints, you can build your own Flix using any publicaly available SPARQL endpoint. The configuration if the entire project is done in RDF, see the [./config/config.example.nl](example configuration).
 
 > [!NOTE]
 >
