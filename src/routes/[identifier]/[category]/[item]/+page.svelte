@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Img, Breadcrumb, BreadcrumbItem, Heading, P, paragraph } from "flowbite-svelte";
+  import { Img, Breadcrumb, BreadcrumbItem, Heading, P } from "flowbite-svelte";
   let { data } = $props();
   const truncate = (text: string, length: number = 50) => {
     return text.length > length ? text.substring(0, length) + '…' : text;

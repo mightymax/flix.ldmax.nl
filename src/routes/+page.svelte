@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading, P, Hr, Card, Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
+  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading, P, Card, Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
   import { Drawer, Button, CloseButton } from "flowbite-svelte";
   import { InfoCircleSolid, ArrowRightOutline } from "flowbite-svelte-icons";
   import { page } from "$app/state";

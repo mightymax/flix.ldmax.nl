@@ -18,13 +18,13 @@
         .catch(e =>console.error(`Failed to load "/${data.identifier}/${page.identifier}": ${e.message}`))
     });
   }); 
-  let image: HTMLImgAttributes | undefined = $state();
+  let image: HTMLImgAttributes | undefined = $state(undefined);
 </script>
 <Breadcrumb aria-label="Kruimelpad" class="mb-4">
   <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
   <BreadcrumbItem href="/{data.identifier}">{data.name}</BreadcrumbItem>
 </Breadcrumb>
-<Carousel {images} onchange={(detail) => (image = detail)} class="min-h-[480px] mb-4">
+<Carousel {images} onchange={(detail) => image = detail} class="min-h-[480px] mb-4">
     {#snippet slide({ index, Slide })}
       <a href="/{data.identifier}/{images[index]?.id}">
         <Slide image={images[index]} />

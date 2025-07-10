@@ -2,7 +2,6 @@
   import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading, ButtonGroup } from "flowbite-svelte";
   import { Drawer, Button, CloseButton } from "flowbite-svelte";
   import { InfoCircleSolid, ArrowRightOutline, HomeSolid } from "flowbite-svelte-icons";
-  import { page } from "$app/state";
 	import '../../app.css';
 	let { children, data } = $props();
   let hidden = $state(true);

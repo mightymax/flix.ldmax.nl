@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { HTMLImgAttributes } from 'svelte/elements';
-  import { A, ControlButton, Img, img } from 'flowbite-svelte';
+  import { ControlButton, Img } from 'flowbite-svelte';
   import { goto } from '$app/navigation';
 
-  let { images, ...restProps }: { images: (HTMLImgAttributes & {href: string})[]} = $props();
+  let { images, ..._restProps }: { images: (HTMLImgAttributes & {href: string})[]} = $props();
 
   let container: HTMLDivElement;
 
