@@ -1,5 +1,7 @@
-export const load = async ({ locals }) => {
-  const menu = locals.flix.pages.map(page => {
+export const load = async ({ locals, params }) => {
+  const identifier = params.identifier;
+  const flix = locals.flix.getFlix(identifier);
+  const menu = flix.pages.map(page => {
     return {
       name: page.name,
       url: `/categorie/${page.identifier}`,
@@ -8,5 +10,5 @@ export const load = async ({ locals }) => {
   });
 
   const about = locals.flix.about
-  return { menu, name: locals.flix.name, logo: locals.flix.logo, about };
+  return { menu, name: flix.name, logo: flix.logo, about };
 }

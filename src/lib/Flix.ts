@@ -1,5 +1,5 @@
 import type RDF from '@rdfjs/types';
-import { Store, Parser } from 'n3';
+import { Store, Parser, type Quad_Subject } from 'n3';
 import ns from '$lib/Flix/namespaces.js';
 import fs from 'fs/promises';
 import { marked } from "marked";
@@ -20,7 +20,8 @@ export default class Flix {
 
   public flix: RDF.NamedNode | RDF.BlankNode | undefined = undefined;
 
-  protected constructor() {
+  protected constructor(flix?: RDF.NamedNode | RDF.BlankNode) {
+    if (flix) this.flix = flix;
     // Private constructor to enforce singleton pattern
   }
 
@@ -86,6 +87,25 @@ export default class Flix {
       return new Page(this, quad.object)
     });
     return Flix.#pages
+  }
+
+  public getFlix(identifier: string): Flix | undefined {
+    // construct a new flix based on this identifier
+    if (!this.flix) throw new Error('Flix instance not loaded. Call load() first.');
+    const subFlix = this.store.getSubjects(ns.sdo.isPartOf, this.flix, null)
+      .find(subject => {
+        const id = this.store.getObjects(subject, ns.sdo.identifier, null).shift()?.value;
+        return id === identifier;
+      })
+    if (subFlix) {
+      if (subFlix.termType !== 'NamedNode' && subFlix.termType !== 'BlankNode') {
+        throw new Error(`Expected NamedNode or BlankNode, got ${subFlix.termType} for subFlix: ${subFlix}`);
+      }
+      return new Flix(subFlix);
+    } else {
+      console.warn(`No Flix found with identifier: ${identifier}`);
+      return undefined;
+    }
   }
 
   public getPage(identifier: string): Page | undefined {
