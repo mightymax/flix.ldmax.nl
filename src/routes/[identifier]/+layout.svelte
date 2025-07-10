@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading } from "flowbite-svelte";
+  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading, ButtonGroup } from "flowbite-svelte";
   import { Drawer, Button, CloseButton } from "flowbite-svelte";
-  import { InfoCircleSolid, ArrowRightOutline } from "flowbite-svelte-icons";
+  import { InfoCircleSolid, ArrowRightOutline, HomeSolid } from "flowbite-svelte-icons";
   import { page } from "$app/state";
 	import '../../app.css';
 	let { children, data } = $props();
   let hidden = $state(true);
-  let activeUrl = $derived(page.url.pathname.replace(/\/item\/.+/, ''));
+  let activeUrl = $derived(`/${data.identifier}/${data.params?.category }`);
 </script>
 
 <svelte:head>
@@ -15,30 +15,32 @@
 <div class="relative px-8">
 
   <Navbar class="fixed start-0 top-0 z-20 w-full  bg-gray-200/90 px-2 py-2.5 sm:px-4">
-    <NavBrand href="/">
+    <NavBrand href="/{data.identifier}">
       {#if data.logo}
         <img src={data.logo} class="me-3 h-6 sm:h-9" alt={data.name} />
       {/if}
       <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">{data.name}</span>
     </NavBrand>
     <div class="flex md:order-2">
-      <Button size="sm" class="cursor-pointer" onclick={() => (hidden = false)}><InfoCircleSolid/>
-      </Button>
+      <ButtonGroup>
+        <Button size="sm" href="/" color="primary"><HomeSolid/></Button>
+        <Button size="sm" class="cursor-pointer" color="primary" onclick={() => (hidden = false)}><InfoCircleSolid/></Button>
+      </ButtonGroup>
       <NavHamburger />
     </div>
     <NavUl {activeUrl}>
-      <NavLi href="/">Home</NavLi>
-      {#each data.menu as menuItem}
+      <NavLi href="/{data.identifier}">Home</NavLi>
+      {#each data.menu??[] as menuItem}
         <NavLi href={menuItem.url}>{menuItem.name}</NavLi>
       {/each}
     </NavUl>
   </Navbar>
 </div>
-<div class="mt-20 p-8 min-h-screen flex flex-col">
+<main class="mt-20 p-8 min-h-screen flex flex-col">
   <div class="flex-1">
     {@render children()}
   </div>
-</div>
+</main>
 
 
 <Drawer bind:hidden={hidden} id="sidebar1" aria-controls="sidebar1" aria-labelledby="sidebar1">

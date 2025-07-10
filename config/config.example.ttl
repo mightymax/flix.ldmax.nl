@@ -18,11 +18,11 @@
   """ ;
   sdo:url "https://erfgoedflix.ldmax.nl/" ;
   sdo:creator <https://www.ldmax.nl> ; # De organisatie die deze Flix beheert.
+  # De Flix is een onderdeel van de website, dus we gebruiken sdo:isPartOf om de relatie aan te geven.
+  sdo:hasPart :WO2-Oorlogsbronnen ;
 .
 
 :WO2-Oorlogsbronnen a sdo:WebPage ;
-  # De Flix is een onderdeel van de website, dus we gebruiken sdo:isPartOf om de relatie aan te geven.
-  sdo:isPartOf : ;
   # De sdo:identifier wordt gebruikt om de URL van de Flix te bepalen, dus zorg dat deze uniek is.
   # In dit geval is de URL van de Flix `https://erfgoedflix.ldmax.nl/wo2-oorlogsbronnen`.
   sdo:identifier "wo2-oorlogsbronnen" ;

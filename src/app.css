@@ -37,3 +37,7 @@
     display: none;
   }
 }
+
+main p a {
+  @apply text-secondary-500 hover:text-secondary-700;
+}

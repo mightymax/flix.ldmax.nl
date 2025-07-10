@@ -1,8 +1,8 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 export const GET: RequestHandler = async ({ locals, params }) => {
-  const page = locals.flix.getPage(params.category!);
+  const page = locals.flix.getFlix(params.identifier??'')?.getPage(params.category!);
   if (!page) {
-    error(404, { message: `Pagina "${params.category}" niet gevonden.` });
+    error(404, { message: `Pagina "${params.identifier??''}/${params.category}" niet gevonden.` });
   }
   const itemsPerPage = 10
   return await page.query({ itemsPerPage })

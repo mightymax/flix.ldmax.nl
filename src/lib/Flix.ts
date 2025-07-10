@@ -1,10 +1,10 @@
 import type RDF from '@rdfjs/types';
-import { Store, Parser, type Quad_Subject } from 'n3';
+import { Store, Parser, type Quad_Subject, Writer } from 'n3';
 import ns from '$lib/Flix/namespaces.js';
 import fs from 'fs/promises';
 import { marked } from "marked";
 
-import path from 'path';
+import path, { format } from 'path';
 import Page from './Flix/Page';
 import { Engine } from './Flix/Engine';
 
@@ -16,10 +16,8 @@ export default class Flix {
    */
   private static instance: Flix | undefined = undefined;
 
-  static #pages: Page[] | undefined
-
   public flix: RDF.NamedNode | RDF.BlankNode | undefined = undefined;
-
+  
   protected constructor(flix?: RDF.NamedNode | RDF.BlankNode) {
     if (flix) this.flix = flix;
     // Private constructor to enforce singleton pattern
@@ -59,6 +57,21 @@ export default class Flix {
       });
   }
 
+  public async getConfig(format: string = 'text/turtle'): Promise<string | undefined> {
+    const prefixes: Record<string, string> = {}
+    for (const [key, value] of Object.entries(ns)) {
+      prefixes[key] = value().value;
+    }
+    const writer = new Writer({ format, prefixes });
+    writer.addQuads(this.store.getQuads(null, null, null, null));
+    return new Promise<string | undefined>((resolve, reject) => {
+      writer.end((error, result) => {
+      if (error) reject(error);
+      else resolve(result);
+      });
+    });
+  }
+
   public async carouselItems() {
     const engine = new Engine(this);
     await this.load()
@@ -75,24 +88,21 @@ export default class Flix {
   }
 
   public get pages() {
-    if (Flix.#pages) return Flix.#pages
-    const quads = this.flix ?
-      this.store.getQuads(this.flix, ns.sdo.hasPart, null, null) :
+    const pages = this.flix ?
+      this.store.getObjects(this.flix, ns.sdo.hasPart, null) :
       [];
-    console.log(quads)
-    Flix.#pages = quads.map(quad => {
-      if (quad.object.termType !== 'NamedNode' && quad.object.termType !== 'BlankNode') {
-        throw new Error(`Expected NamedNode or BlankNode, got ${quad.object.termType} for quad: ${quad}`);
+    return pages.map(page => {
+      if (page.termType !== 'NamedNode' && page.termType !== 'BlankNode') {
+        throw new Error(`Expected NamedNode or BlankNode, got ${page.termType} for page: ${page.value}`);
       }
-      return new Page(this, quad.object)
+      return new Page(this, page)
     });
-    return Flix.#pages
   }
 
   public getFlix(identifier: string): Flix | undefined {
     // construct a new flix based on this identifier
     if (!this.flix) throw new Error('Flix instance not loaded. Call load() first.');
-    const subFlix = this.store.getSubjects(ns.sdo.isPartOf, this.flix, null)
+    const subFlix = this.store.getObjects(this.flix, ns.sdo.hasPart, null)
       .find(subject => {
         const id = this.store.getObjects(subject, ns.sdo.identifier, null).shift()?.value;
         return id === identifier;
@@ -101,7 +111,10 @@ export default class Flix {
       if (subFlix.termType !== 'NamedNode' && subFlix.termType !== 'BlankNode') {
         throw new Error(`Expected NamedNode or BlankNode, got ${subFlix.termType} for subFlix: ${subFlix}`);
       }
-      return new Flix(subFlix);
+      const flix = new Flix(subFlix)
+      flix.flix = subFlix; // Set the flix property to the subFlix
+      flix.store = this.store; // Share the same store instance
+      return flix;
     } else {
       console.warn(`No Flix found with identifier: ${identifier}`);
       return undefined;
@@ -135,7 +148,6 @@ export default class Flix {
   public get about() {
     if (!this.flix) return
     const creatorNode = this.store.getQuads(this.flix, ns.sdo.creator, null, null).shift()?.object as RDF.NamedNode | RDF.BlankNode;
-    console.log('Creator Node:', creatorNode)
     let creator: { name: string, description: string, url: string, logo: string } | undefined = undefined;
     if (creatorNode) {
       let description = this.getProperty(creatorNode, ns.sdo.description) || '';

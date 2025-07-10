@@ -11,12 +11,13 @@
       src: archivalObject.imageUrl[0],
       alt: archivalObject.description.join(' '),
       id: `image-${i++}`,
-      href: `/categorie/${data.params.category}/item/${encodeURIComponent(archivalObject.id)}`
+      href: `/${data.params.identifier}/${data.params.category}/${encodeURIComponent(archivalObject.id)}`
     }))
   );
 </script>
 <Breadcrumb aria-label="Kruimelpad" class="mb-4">
   <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
+  <BreadcrumbItem href="/{data.identifier}">{data.flixName}</BreadcrumbItem>
   <BreadcrumbItem>{data.page.name}</BreadcrumbItem>
 </Breadcrumb>
 <svelte:head>

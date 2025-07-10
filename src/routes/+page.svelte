@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading, P, Hr } from "flowbite-svelte";
+  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading, P, Hr, Card, Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
   import { Drawer, Button, CloseButton } from "flowbite-svelte";
   import { InfoCircleSolid, ArrowRightOutline } from "flowbite-svelte-icons";
   import { page } from "$app/state";
 	import '../app.css';
 	let {data} = $props();
   let hidden = $state(true);
-  let activeUrl = $derived(page.url.pathname.replace(/\/item\/.+/, ''));
+  let activeUrl = $derived(page.url.pathname);
 </script>
 
 <svelte:head>
@@ -34,39 +34,29 @@
     </NavUl>
   </Navbar>
 </div>
-<div class="mt-20 p-8 min-h-screen flex flex-col">
+<main class="mt-20 p-8 min-h-screen flex flex-col">
+<Breadcrumb aria-label="Kruimelpad" class="mb-4">
+  <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
+</Breadcrumb>
   <div class="flex-1">
     <Heading tag="h1" class="text-3xl font-bold mb-4 text-primary-600">{data.name}</Heading>
     <P class="mb-6 text-xl">
       {@html data.description}
     </P>
-    <Heading tag="h2" class="text-2xl uppercase text-gray-700">Beschikbare erfgoedflixers<sup class="text-primary-500">*</sup></Heading>
+    <Heading tag="h2" class="text-2xl uppercase text-gray-700 mb-4">Beschikbare erfgoedflixers<sup class="text-primary-500">*</sup></Heading>
     {#each data.flixers as flix}
-      <div class="mb-4 mt-4">
-        <Heading tag="h3" class="text-xl mb-4 text-gray-600">{flix.name}</Heading>
-        <p class="mb-2">
-          {@html flix.description}
+     <Card href="/{flix.identifier}" class="p-4 sm:p-6 md:p-8">
+       <Heading tag="h3" class="text-xl mb-4 text-gray-600">{flix.name}</Heading>
+       <p class="font-normal text-gray-700 dark:text-gray-400">
+         {@html flix.description}
         </p>
-        <Button href="/{flix.identifier}" class="px-4">Bekijk erfgoedflix <ArrowRightOutline class="ms-2 h-5 w-5" /></Button>
-      </div>
+        <Button class="px-4 mt-4 cursor-pointer">Bekijk erfgoedflix <ArrowRightOutline class="ms-2 h-5 w-5" /></Button>
+     </Card>
     {/each}
 
     <p class="text-sm text-gray-500 mt-4"><sup class="text-primary-500">*</sup> Een "erfgoedflix" is een thematische samengesteelde beeldbank. De flix kan uit verschillende bronnen data gebruiken.</p>
-  {#if data.about?.creator}
-  <Hr class="my-8" />
-    <Heading tag="h2" class="text-2xl mt-8 uppercase text-gr">Over de maker</Heading>
-    {#if data.about.creator.logo}
-      <img src={data.about.creator.logo} class="mb-4 h-16 w-16 " alt={data.about.creator.name} />
-    {/if}
-    {#if data.about.creator.url}
-      <p class="mb-6">
-        {@html data.about.creator.description}
-      </p>
-      <Button href={data.about.creator.url} class="px-4">Bezoek website <ArrowRightOutline class="ms-2 h-5 w-5" /></Button>
-    {/if}
-  {/if}
   </div>
-</div>
+</main>
 
 
 <Drawer bind:hidden={hidden} id="sidebar1" aria-controls="sidebar1" aria-labelledby="sidebar1">

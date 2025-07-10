@@ -43,23 +43,6 @@
     {/each}
   </div>
 
-  <!-- Left arrow -->
   <ControlButton forward={false} onclick={scrollLeft}/>
-  <!-- <button
-    onclick={scrollLeft}
-    class="absolute top-1/2 left-2 transform -translate-y-1/2 z-10 bg-white bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 shadow"
-    aria-label="Scroll left"
-  >
-    ◀
-  </button> -->
-
-  <!-- Right arrow -->
   <ControlButton forward={true} onclick={scrollRight}/>
-  <!-- <button
-    onclick={scrollRight}
-    class="absolute top-1/2 right-2 transform -translate-y-1/2 z-10 bg-white bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 shadow"
-    aria-label="Scroll right"
-  >
-    ▶
-  </button> -->
 </div>
