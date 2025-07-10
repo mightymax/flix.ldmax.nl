@@ -7,7 +7,6 @@ import { marked } from "marked";
 import path from 'path';
 import Page from './Flix/Page';
 import { Engine } from './Flix/Engine';
-// import { QueryEngine } from '@comunica/query-sparql';
 
 export default class Flix {
   public store: Store = new Store();
@@ -15,7 +14,7 @@ export default class Flix {
   /**
    * Singleton instance of Flix
    */
-  private static instance: Flix | null = null;
+  private static instance: Flix | undefined = undefined;
 
   static #pages: Page[] | undefined
 
@@ -26,22 +25,31 @@ export default class Flix {
   }
 
   public static async getInstance(): Promise<Flix> {
-    if (Flix.instance) {
-      // return Flix.instance;
+    if (!Flix.instance) {
+      Flix.instance = new Flix();
+      return Flix.instance.load()
+    } else {
+      return Promise.resolve(Flix.instance);
     }
-    Flix.instance = new Flix();
-    return await Flix.instance.load();
   }
 
   private async load(): Promise<Flix> {
-    const settingsPath = path.resolve('config/settings.ttl');
+    if (this.flix) return this
+    const settingsPath = path.resolve('config/config.ttl');
     console.log(`Loading Flix configuration from ${settingsPath}`);
     const parser = new Parser();
     return await fs.readFile(settingsPath, 'utf-8')
       .then(text => {
         const quads = parser.parse(text);
         this.store.addQuads(quads)
-        this.flix = this.store.getQuads(null, ns.rdf.type, ns.sdo.WebApplication, null).shift()?.subject as RDF.NamedNode | RDF.BlankNode;
+        const flix = this.store.getQuads(null, ns.rdf.type, ns.sdo.WebApplication, null).shift()?.subject;
+        if (!flix) {
+          throw new Error('Flix instance not found in configuration.');
+        }
+        if (flix.termType !== 'NamedNode' && flix.termType !== 'BlankNode') {
+          throw new Error(`Expected NamedNode or BlankNode, got ${flix.termType} for Flix instance.`);
+        }
+        this.flix = flix
         return this;
       })
       .catch((error) => {
@@ -52,10 +60,8 @@ export default class Flix {
 
   public async carouselItems() {
     const engine = new Engine(this);
-    if (!this.flix) {
-      throw new Error('Flix instance is not loaded.');
-    }
-    const store = new Store(await engine.query(this.flix));
+    await this.load()
+    const store = new Store(await engine.query(this.flix!));
     const images: {title: string, src: string, id: string }[] = []
     store.getSubjects(ns.rdf.type, ns.sdo.ArchivalObject, null)
       .forEach(subject => {
@@ -72,6 +78,7 @@ export default class Flix {
     const quads = this.flix ?
       this.store.getQuads(this.flix, ns.sdo.hasPart, null, null) :
       [];
+    console.log(quads)
     Flix.#pages = quads.map(quad => {
       if (quad.object.termType !== 'NamedNode' && quad.object.termType !== 'BlankNode') {
         throw new Error(`Expected NamedNode or BlankNode, got ${quad.object.termType} for quad: ${quad}`);
@@ -90,13 +97,25 @@ export default class Flix {
     return this.store.getObjects(subject, property, null).map(o => o.value).shift();
   }
 
+  // Getters for metadata of the Flix instance
+
   public get name(): string {
     return this.getProperty(this.flix, ns.sdo.name as unknown as RDF.NamedNode) || 'Flix'
+  }
+
+  public get description(): string {
+    const description = this.getProperty(this.flix, ns.sdo.description)
+    return description ? marked.parse(description.trim().replace(/^\s+/gm, ''), { async: false}) : ''
+  }
+
+  public get logo(): string | undefined {
+    return this.getProperty(this.flix, ns.sdo.logo) 
   }
 
   public get about() {
     if (!this.flix) return
     const creatorNode = this.store.getQuads(this.flix, ns.sdo.creator, null, null).shift()?.object as RDF.NamedNode | RDF.BlankNode;
+    console.log('Creator Node:', creatorNode)
     let creator: { name: string, description: string, url: string, logo: string } | undefined = undefined;
     if (creatorNode) {
       let description = this.getProperty(creatorNode, ns.sdo.description) || '';
@@ -110,19 +129,12 @@ export default class Flix {
         logo: this.getProperty(creatorNode, ns.sdo.logo) || ''
       }
     }
-    let description = this.getProperty(this.flix, ns.sdo.description) || '';
-    if (description) {
-      description = marked.parse(description.trim().replace(/^\s+/gm, ''), { async: false});
-    }
     return {
       name: this.name,
-      description,
+      description: this.description,
       url: this.getProperty(this.flix, ns.sdo.url) || '',
       creator
     }
   }
 
-  public get logo(): string | undefined {
-    return this.getProperty(this.flix, ns.sdo.logo) 
-  }
 }

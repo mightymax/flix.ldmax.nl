@@ -4,7 +4,7 @@
 @prefix comunica: <https://comunica.dev/vocabulary#> .
 @prefix : <myflix> .
 
-: a sdo:WebApplication ;
+: a sdo:WebPage ;
   sdo:creator :Creator ;  
   sdo:name "Beeldbank WO2 Oorlogsbronnen" ;
   sdo:description """
@@ -63,7 +63,7 @@
    .
 
 :Creator a sdo:Organization ;
-    sdo:name "Visserijmuseum Zoutkamp" ;
+    sdo:name "Netwerk Oorlogsbronnen" ;
     sdo:logo "https://upload.wikimedia.org/wikipedia/commons/4/48/Logo_Netwerk_Oorlogsbronnen.jpg"^^xsd:anyURI ;
     sdo:description """
       [Oorlogsbronnen.nl ](http://oorlogsbronnen.nl) is het startpunt voor iedereen die meer wil weten over de Tweede Wereldoorlog in Nederland. 

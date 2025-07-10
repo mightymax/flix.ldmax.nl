@@ -3,7 +3,7 @@
   import { Drawer, Button, CloseButton } from "flowbite-svelte";
   import { InfoCircleSolid, ArrowRightOutline } from "flowbite-svelte-icons";
   import { page } from "$app/state";
-	import '../app.css';
+	import '../../app.css';
 	let { children, data } = $props();
   let hidden = $state(true);
   let activeUrl = $derived(page.url.pathname.replace(/\/item\/.+/, ''));

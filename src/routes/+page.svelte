@@ -1,41 +1,84 @@
 <script lang="ts">
-  import type { HTMLImgAttributes } from "svelte/elements";
-  import { Spinner, Carousel, Controls, Heading, Button } from 'flowbite-svelte';
-  import ImageScroller from '$lib/ImageScroller.svelte';
-  import { onMount } from 'svelte';
-  import { ChevronDoubleRightOutline } from 'flowbite-svelte-icons';
-  const { data } = $props();
-  const images = $derived(data.carouselItems)
-  let archivalObjectsPerPage = $state(new Map<string, FlixObject.ArchivalObject[]>())
-  onMount(() => {
-    data.pages.forEach(async (page) => {
-      fetch(`/categorie/${page.identifier}`, { headers: { 'Accept': 'application/json' } })
-        .then(response => response.json())
-        .then((archivalObjects: FlixObject.ArchivalObject[]) => {
-          archivalObjectsPerPage.set(page.identifier!, archivalObjects);
-          archivalObjectsPerPage = new Map(archivalObjectsPerPage);
-        })
-        .catch(e =>console.error(`Failed to load "/categorie/${page.identifier}": ${e.message}`))
-    });
-  }); 
-  let image: HTMLImgAttributes | undefined = $state();
+  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading, P } from "flowbite-svelte";
+  import { Drawer, Button, CloseButton } from "flowbite-svelte";
+  import { InfoCircleSolid, ArrowRightOutline } from "flowbite-svelte-icons";
+  import { page } from "$app/state";
+	import '../app.css';
+	let {data} = $props();
+  let hidden = $state(true);
+  let activeUrl = $derived(page.url.pathname.replace(/\/item\/.+/, ''));
 </script>
-<Carousel {images} onchange={(detail) => (image = detail)} class="min-h-[480px] mb-4">
-    {#snippet slide({ index, Slide })}
-      <a href="/categorie/{images[index]?.id}">
-        <Slide image={images[index]} />
-      </a>
-      <a href="/categorie/{images[index]?.id}">
-        <Heading tag="h2" class="uppercase h-20 rounded-sm bg-gray-300/50 p-5 text-center relative">{images[index].title}</Heading>
-      </a>
-    {/snippet}
-    <Controls />
-</Carousel>
-{#each data.pages as page}
-<div class="flex items-center justify-between">
-  <Heading tag="h3" class="my-4 uppercase" hidden={!archivalObjectsPerPage.has(page.identifier!)}>{page.name}</Heading>
-  <Button href="/categorie/{page.identifier}">Bekijk alles <ChevronDoubleRightOutline /></Button>
+
+<svelte:head>
+  <title>{data.name}</title>
+</svelte:head>
+<div class="relative px-8">
+
+  <Navbar class="fixed start-0 top-0 z-20 w-full  bg-gray-200/90 px-2 py-2.5 sm:px-4">
+    <NavBrand href="/">
+      {#if data.logo}
+        <img src={data.logo} class="me-3 h-6 sm:h-9" alt={data.name} />
+      {/if}
+      <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">{data.name}</span>
+    </NavBrand>
+    <div class="flex md:order-2">
+      <Button size="sm" class="cursor-pointer" onclick={() => (hidden = false)}><InfoCircleSolid/>
+      </Button>
+      <NavHamburger />
+    </div>
+    <NavUl {activeUrl}>
+      <NavLi href="/">Home</NavLi>
+      {#each data.menu as menuItem}
+        <NavLi href={menuItem.url}>{menuItem.name}</NavLi>
+      {/each}
+    </NavUl>
+  </Navbar>
 </div>
-<span class:hidden={archivalObjectsPerPage.has(page.identifier!)}><Spinner /></span>
-<ImageScroller images={archivalObjectsPerPage.get(page.identifier!)?.map(i => { return {href: `/categorie/${page.identifier}/item/${encodeURIComponent(i.id)}`, src: i.imageUrl![0]}}) ?? []} />
-{/each}
+<div class="mt-20 p-8 min-h-screen flex flex-col">
+  <div class="flex-1">
+    <Heading tag="h1" class="text-3xl font-bold mb-4">{data.name}</Heading>
+    <P class="mb-6 text-xl">
+      {@html data.description}
+    </P>
+  {#if data.about?.creator}
+    <Heading tag="h2" class="text-lg mb-4 uppercase">Over de maker</Heading>
+    {#if data.about.creator.logo}
+      <img src={data.about.creator.logo} class="mb-4 h-16 w-16 " alt={data.about.creator.name} />
+    {/if}
+    {#if data.about.creator.url}
+      <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+        {@html data.about.creator.description}
+      </p>
+      <Button href={data.about.creator.url} class="px-4">Bezoek website <ArrowRightOutline class="ms-2 h-5 w-5" /></Button>
+    {/if}
+  {/if}
+
+    <pre>{JSON.stringify(data, null, 2)}</pre>
+  </div>
+</div>
+
+
+<Drawer bind:hidden={hidden} id="sidebar1" aria-controls="sidebar1" aria-labelledby="sidebar1">
+  <div class="flex items-center justify-between">
+    <h5 id="drawer-label" class="mb-4 inline-flex items-center text-base font-semibold text-gray-500 dark:text-gray-400">
+      <InfoCircleSolid class="me-2.5 h-5 w-5" />Info
+    </h5>
+    <CloseButton onclick={() => (hidden = true)} class="mb-4 dark:text-white" />
+  </div>
+  <Heading tag="h3" class="text-lg mb-4 uppercase">{data.name}</Heading>
+  <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+    {@html data.about?.description}
+  </p>
+  {#if data.about?.creator}
+    <Heading tag="h4" class="text-lg mb-4 uppercase">Over de maker</Heading>
+    {#if data.about.creator.logo}
+      <img src={data.about.creator.logo} class="mb-4 h-16 w-16 " alt={data.about.creator.name} />
+    {/if}
+    {#if data.about.creator.url}
+      <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+        {@html data.about.creator.description}
+      </p>
+      <Button href={data.about.creator.url} class="px-4">Bezoek website <ArrowRightOutline class="ms-2 h-5 w-5" /></Button>
+    {/if}
+  {/if}
+</Drawer>
