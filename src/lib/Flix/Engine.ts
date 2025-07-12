@@ -50,4 +50,19 @@ export class Engine {
       .then(result => result.toArray())
   }
 
+  public async allBindings(flix: RDF.NamedNode | RDF.BlankNode, subject: RDF.NamedNode | RDF.BlankNode): Promise<RDF.Bindings[]> {
+    const engine = new QueryEngine();
+    const comunicaSettings = this.getComunicaSettings(flix);
+    if (!comunicaSettings) return Promise.reject(new Error(`Er is geen comunica:settings eigenschap gevonden voor node ${subject.value}.`));
+    const source = this.flix.getProperty(comunicaSettings, ns.comunica.source)
+    if (!source) return Promise.reject(new Error(`Er is geen comunica:settings/comunica:source eigenschap gevonden voor node ${subject.value}.`));
+
+    const query = `SELECT * WHERE { <${subject.value}> ?p ?o }`;
+    return engine.queryBindings(query, {
+      sources: [{
+        type: this.flix.getProperty(comunicaSettings, ns.comunica.type) ?? 'sparql',
+        value: source
+      }],
+    }).then(result => result.toArray());
+  }
 }

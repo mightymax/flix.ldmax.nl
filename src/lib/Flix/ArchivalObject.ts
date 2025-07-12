@@ -1,9 +1,14 @@
 import type RDF from '@rdfjs/types';
 import ns from './namespaces';
+import type Flix from '$lib/Flix';
+import { Engine } from './Engine';
 export default class ArchivalObject {
 
-  public constructor(node: RDF.Quad_Subject, private quads: RDF.Quad[]) {
-    this.quads = quads.filter(q => q.subject.equals(node));
+  public constructor(private flix: Flix, private subject: RDF.Quad_Subject, private quads: RDF.Quad[]) {
+    if (subject.termType !== 'NamedNode' && subject.termType !== 'BlankNode') {
+      throw new Error(`Invalid subject type: ${subject.termType}. Expected NamedNode or BlankNode.`);
+    }
+    this.quads = quads.filter(q => q.subject.equals(subject));
   }
 
   private getProperties(predicate: RDF.NamedNode) {
@@ -38,13 +43,17 @@ export default class ArchivalObject {
     };
   }
 
-  public static fromQuads(quads: RDF.Quad[]): ArchivalObject[] {
+  public static fromQuads(flix: Flix, quads: RDF.Quad[]): ArchivalObject[] {
     const nodes = quads.filter(q => q.predicate.equals(ns.rdf.type) && q.object.equals(ns.sdo.ArchivalObject)).map(q => q.subject as RDF.NamedNode);
     const archivalObjects: ArchivalObject[] = [];
     for (const n of nodes) {
       const $quads = quads.filter(q => q.subject.equals(n));
-      archivalObjects.push(new ArchivalObject(n, $quads));
+      archivalObjects.push(new ArchivalObject(flix, n, $quads));
     }
     return archivalObjects;
+  }
+
+  public loadBindings(): Promise<RDF.Bindings[]> {
+    return new Engine(this.flix).allBindings(this.flix.flix!, this.subject as RDF.NamedNode | RDF.BlankNode);
   }
 }

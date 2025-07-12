@@ -26,7 +26,7 @@ export default class Page {
 
   public async query(opts?: Partial<{ page: number, itemsPerPage: number}>) {
     return (new Engine(this.flix)).query(this.page, opts)
-      .then(result => ArchivalObject.fromQuads(result))
+      .then(result => ArchivalObject.fromQuads(this.flix, result))
   }
 
   public async getArchivalObject(subject: string): Promise<ArchivalObject | undefined> {
@@ -35,7 +35,7 @@ export default class Page {
     if (result.length === 0) {
       return undefined;
     } 
-    return ArchivalObject.fromQuads(result).shift();
+    return ArchivalObject.fromQuads(this.flix, result).shift();
   }
 
   public toJSON() {
