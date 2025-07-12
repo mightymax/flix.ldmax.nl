@@ -7,7 +7,7 @@ const propertyMapping =new Map<string, {label: string, iris: string[]}>([
   ],
   [
     'description', {
-    iris: ['http://purl.org/dc/elements/1.1/description', 'https://schema.org/description'],
+    iris: ['http://purl.org/dc/elements/1.1/description', 'https://schema.org/description', 'https://schema.org/abstract'],
     label: 'Beschrijving'
   }],
   [
@@ -27,12 +27,12 @@ const propertyMapping =new Map<string, {label: string, iris: string[]}>([
   }],
   [
     'rights', {
-    iris: ['http://purl.org/dc/elements/1.1/rights'],
+    iris: ['http://purl.org/dc/elements/1.1/rights', 'https://schema.org/license'],
     label: 'Rechten'
   }],
   [
     'subject', {
-    iris: ['http://purl.org/dc/elements/1.1/subject'],
+    iris: ['http://purl.org/dc/elements/1.1/subject', 'https://schema.org/keywords'],
     label: 'Onderwerpen'
   }],
   [

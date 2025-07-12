@@ -121,7 +121,10 @@ export default class Flix {
   public getFlix(identifier: string): Flix | undefined {
     // construct a new flix based on this identifier
     if (!this.flix) throw new Error('Flix instance not loaded. Call load() first.');
-    const subFlix = this.store.getObjects(this.flix, ns.sdo.hasPart, null)
+    const subFlix = [
+        ...this.store.getObjects(this.flix, ns.sdo.hasPart, null),
+        ...this.store.getSubjects(ns.sdo.isPartOf, this.flix, null)
+      ]
       .find(subject => {
         const id = this.store.getObjects(subject, ns.sdo.identifier, null).shift()?.value;
         return id === identifier;

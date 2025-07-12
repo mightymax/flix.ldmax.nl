@@ -23,7 +23,7 @@ erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
   # De carouselItems worden gebruikt om de afbeeldingen in de carousel te tonen.
   comunica:settings [
     comunica:type "sparql" ;
-    comunica:query "config/example/queries/carouselItems.rq"^^flix:file ;
+    comunica:query "config/example/wo2-oorlogsbronnen/carouselItems.rq"^^flix:file ;
     comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
   ] ;
   sdo:hasPart [
@@ -33,7 +33,7 @@ erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
     sdo:identifier 'bombardement' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/example/queries/bombardementen.rq'^^flix:file ;
+      comunica:query 'config/example/wo2-oorlogsbronnen/bombardementen.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ], [
@@ -43,7 +43,7 @@ erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
     sdo:identifier 'bevrijding' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/example/queries/bevrijding.rq'^^flix:file ;
+      comunica:query 'config/example/wo2-oorlogsbronnen/bevrijding.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ], [
@@ -53,7 +53,7 @@ erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
     sdo:identifier 'luchtfotografie' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/example/queries/luchtfotografie.rq'^^flix:file ;
+      comunica:query 'config/example/wo2-oorlogsbronnen/luchtfotografie.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ], [
@@ -63,7 +63,7 @@ erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
     sdo:identifier 'meidagen-1940' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/example/queries/meidagen-1940.rq'^^flix:file ;
+      comunica:query 'config/example/wo2-oorlogsbronnen/meidagen-1940.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ]

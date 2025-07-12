@@ -11,6 +11,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"deploy": "docker build -t ghcr.io/mightymax/flix.ldmax.nl:latest . && docker push ghcr.io/mightymax/flix.ldmax.nl:latest && kubctl rollout restart deployment erfgoedflix -n ldmax",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

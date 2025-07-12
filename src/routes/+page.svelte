@@ -44,6 +44,7 @@
       {@html data.description}
     </P>
     <Heading tag="h2" class="text-2xl uppercase text-gray-700 mb-4">Beschikbare erfgoedflixers<sup class="text-primary-500">*</sup></Heading>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {#each data.flixers as flix}
      <Card href="/{flix.identifier}" class="p-4 sm:p-6 md:p-8">
        <Heading tag="h3" class="text-xl mb-4 text-gray-600">{flix.name}</Heading>
@@ -53,6 +54,7 @@
         <Button class="px-4 mt-4 cursor-pointer">Bekijk erfgoedflix <ArrowRightOutline class="ms-2 h-5 w-5" /></Button>
      </Card>
     {/each}
+     </div>
 
     <p class="text-sm text-gray-500 mt-4"><sup class="text-primary-500">*</sup> Een "erfgoedflix" is een thematische samengesteelde beeldbank. De flix kan uit verschillende bronnen data gebruiken.</p>
   </div>

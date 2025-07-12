@@ -1,8 +1,10 @@
+import { error } from '@sveltejs/kit';
+
 export const load = async ({ locals, params }) => {
   const { flix } = locals;
   const subFlix = flix.getFlix(params.identifier);
   if (!subFlix) {
-    return { status: 404, error: new Error('Flix not found') };
+    throw error(404, { message: `Flix ${params.identifier} not found` });
   }
   const carouselItems = await subFlix.carouselItems();
   const pages = subFlix.pages

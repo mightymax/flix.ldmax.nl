@@ -1,0 +1,67 @@
+@prefix sdo: <https://schema.org/> . # Schema.org
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . # XML Schema Definition
+@prefix flix: <https://erfgoedflix.nl/vocabulary#> .
+@prefix comunica: <https://comunica.dev/vocabulary#> .
+@prefix erfgoedflix: <https://erfgoedflix.ldmax.nl/> .
+
+erfgoedflix:Daguerreobase a sdo:WebPage ;
+  sdo:isPartOf erfgoedflix: ;
+  sdo:identifier "Daguerreobase" ;
+  sdo:creator <https://daguerreobase.org> ;  
+  sdo:name "Daguerreobase" ;
+  sdo:description """
+    Daguerreobase is een online applicatie die gedetailleerde informatie over daguerreotypieën bevat. 
+    Leden kunnen records van individuele daguerreotypieën bekijken, bewerken en opslaan en relaties 
+    leggen met andere records op basis van een groot aantal kenmerken. 
+    Dit omvat collecties, eigenaars, makers, stempels, behuizingsmodellen, maten, materialen en beschrijvingen.
+    """;
+  sdo:dateCreated "2023-10-01T00:00:00Z"^^xsd:dateTime ;
+  sdo:dateModified "2023-10-01T00:00:00Z"^^xsd:dateTime ;
+  # De carouselItems worden gebruikt om de afbeeldingen in de carousel te tonen.
+  comunica:settings [
+    comunica:type "sparql" ;
+    comunica:query "config/example/daguerreobase/carouselItems.rq"^^flix:file ;
+    comunica:source  "https://sparql.ldmax.nl/nederlands-fotomuseum"
+  ] ;
+  sdo:hasPart [
+    a sdo:WebPage ;
+    sdo:name "Beeldhouwwerk" ;
+    sdo:description "Afbeeldingen van beeldhouwwerken" ;
+    sdo:identifier 'sculpture' ;
+    comunica:settings [
+      comunica:type "sparql" ;
+      comunica:query 'config/example/daguerreobase/sculpture.rq'^^flix:file ;
+      comunica:source  "https://sparql.ldmax.nl/nederlands-fotomuseum"
+    ]; 
+  ], [
+    a sdo:WebPage ;
+    sdo:name "Mannen" ;
+    sdo:description "Portretten van mannen" ;
+    sdo:identifier 'mannen' ;
+    comunica:settings [
+      comunica:type "sparql" ;
+      comunica:query 'config/example/daguerreobase/man.rq'^^flix:file ;
+      comunica:source  "https://sparql.ldmax.nl/nederlands-fotomuseum"
+    ]; 
+  ], [
+    a sdo:WebPage ;
+    sdo:name "Steden" ;
+    sdo:description "Afbeeldingen van steden" ;
+    sdo:identifier 'steden' ;
+    comunica:settings [
+      comunica:type "sparql" ;
+      comunica:query 'config/example/daguerreobase/city-view.rq'^^flix:file ;
+      comunica:source  "https://sparql.ldmax.nl/nederlands-fotomuseum"
+    ]; 
+  ], [
+    a sdo:WebPage ;
+    sdo:name "Kinderen" ;
+    sdo:description "Afbeeldingen van kinderen" ;
+    sdo:identifier 'kinderen' ;
+    comunica:settings [
+      comunica:type "sparql" ;
+      comunica:query 'config/example/daguerreobase/child.rq'^^flix:file ;
+      comunica:source  "https://sparql.ldmax.nl/nederlands-fotomuseum"
+    ]; 
+  ].
+

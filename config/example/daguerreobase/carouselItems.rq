@@ -1,0 +1,29 @@
+PREFIX sdo: <https://schema.org/>
+
+CONSTRUCT {
+  [] a sdo:ArchivalObject ;
+     sdo:name ?keywords ;
+     sdo:identifier ?identifier ;
+     sdo:imageUrl ?imageUrl .
+}
+WHERE {
+  {
+    SELECT ?keywords (SAMPLE(?imageUrl_) AS ?imageUrl) ?identifier
+    WHERE {
+      {
+        SELECT ?keywords ?imageUrl_ 
+               (REPLACE(LCASE(STR(?keywords)), " ", "-") AS ?identifier)
+        WHERE {
+          ?heritageObject a sdo:Photograph ;
+            sdo:associatedMedia/sdo:thumbnailUrl ?imageUrl_250px ;
+            sdo:keywords ?keywords .
+          FILTER(?keywords IN ("man", "sculpture", "child", "city view"))
+          BIND(REPLACE(STR(?imageUrl_250px), "!250,250", "1024,") AS ?imageUrl_)
+        }
+        ORDER BY RAND()
+      }
+    }
+    GROUP BY ?keywords ?identifier
+  }
+}
+LIMIT 100

@@ -1,0 +1,19 @@
+PREFIX sdo: <https://schema.org/>
+construct {
+	?heritageObject a sdo:ArchivalObject; sdo:name ?name; sdo:description ?description; sdo:imageUrl ?imageUrl 
+} where {
+  select 
+	?heritageObject 
+	(sample(?_name) as ?name) 
+	(sample(?_description) as ?description)
+	(sample(?_imageUrl) as ?imageUrl)
+  where { 
+	?heritageObject a sdo:Photograph; sdo:keywords ?keywords; 
+	sdo:associatedMedia/sdo:thumbnailUrl ?imageUrl_250px ; 
+    sdo:name ?_name; 
+    sdo:abstract ?_description ;
+    filter(?keywords = 'man')
+    BIND(REPLACE(STR(?imageUrl_250px), "!250,250", "500,") AS ?_imageUrl)
+    #{ITEM_FILTER}
+   } group by ?heritageObject limit 100
+ }
