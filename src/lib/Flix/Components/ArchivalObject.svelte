@@ -34,7 +34,7 @@
   <P class="text-lg mb-4">Bron: <a href="{getProperties('source')?.values.shift()}">{getProperties('source')?.values.shift()}</a></P>
 {/if}
 {#if getProperties('rights')?.values.length > 0}
-  <P class="text-lg mb-4">Rechten: <a href="{getProperties('rights')?.values.shift()}">{getProperties('rights')?.values.shift()}</a></P>
+  <P class="text-lg mb-4">Rechten: {getProperties('rights')?.values.shift()}</P>
 {/if}
 <Heading class="mt-8 mb-4 text-lg" tag="h2">Beschrijving</Heading>
 {#each getProperties('description')?.values as description}

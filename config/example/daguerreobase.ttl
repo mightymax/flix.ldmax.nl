@@ -35,33 +35,34 @@ erfgoedflix:Daguerreobase a sdo:WebPage ;
     ]; 
   ], [
     a sdo:WebPage ;
-    sdo:name "Mannen" ;
-    sdo:description "Portretten van mannen" ;
-    sdo:identifier 'mannen' ;
+    sdo:name "Kerken" ;
+    sdo:description "Kerken" ;
+    sdo:identifier 'church' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/example/daguerreobase/man.rq'^^flix:file ;
+      comunica:query 'config/example/daguerreobase/church.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/nederlands-fotomuseum"
     ]; 
   ], [
     a sdo:WebPage ;
-    sdo:name "Steden" ;
-    sdo:description "Afbeeldingen van steden" ;
-    sdo:identifier 'steden' ;
+    sdo:name "Landschap" ;
+    sdo:description "Afbeeldingen van landschappen" ;
+    sdo:identifier 'landscape' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/example/daguerreobase/city-view.rq'^^flix:file ;
+      comunica:query 'config/example/daguerreobase/landscape.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/nederlands-fotomuseum"
     ]; 
   ], [
     a sdo:WebPage ;
-    sdo:name "Kinderen" ;
-    sdo:description "Afbeeldingen van kinderen" ;
-    sdo:identifier 'kinderen' ;
+    sdo:name "Portretten" ;
+    sdo:description "Portretten van mensen" ;
+    sdo:identifier 'portrait' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/example/daguerreobase/child.rq'^^flix:file ;
+      comunica:query 'config/example/daguerreobase/portrait.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/nederlands-fotomuseum"
     ]; 
-  ].
+  ]
+  .
 
