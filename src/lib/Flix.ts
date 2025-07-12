@@ -3,6 +3,7 @@ import { Store, Parser, Writer } from 'n3';
 import ns from '$lib/Flix/namespaces.js';
 import fs from 'fs/promises';
 import { marked } from "marked";
+import { readFileSync } from 'fs';
 
 import path from 'path';
 import Page from './Flix/Page';
@@ -37,6 +38,21 @@ export default class Flix {
     const settingsPath = path.resolve('config/config.ttl');
     console.log(`Loading Flix configuration from ${settingsPath}`);
     const parser = new Parser();
+    const quads = parser.parse(readFileSync(settingsPath, 'utf-8'));
+    this.store.addQuads(quads)
+    let extraConfigQuads = quads.filter(quad => quad.predicate.equals(ns.flix.loadConfig));
+    while(true) {
+      if (extraConfigQuads.length === 0) break;
+      for (const config of extraConfigQuads) {
+        if (config.object.termType !== 'Literal') {
+          throw new Error(`Expected Literal for config, got ${config.object.termType}`);
+        }
+        console.log(`Loading extra Flix configuration from ${config.object.value}`);
+        const quads = parser.parse(readFileSync(path.resolve(config.object.value), 'utf-8'));
+        this.store.addQuads(quads);
+        extraConfigQuads = quads.filter(quad => quad.predicate.equals(ns.flix.loadConfig));
+      }
+    }
     return await fs.readFile(settingsPath, 'utf-8')
       .then(text => {
         const quads = parser.parse(text);
@@ -89,7 +105,10 @@ export default class Flix {
 
   public get pages() {
     const pages = this.flix ?
-      this.store.getObjects(this.flix, ns.sdo.hasPart, null) :
+      [
+        ...this.store.getObjects(this.flix, ns.sdo.hasPart, null),
+        ...this.store.getSubjects(ns.sdo.isPartOf, this.flix, null),
+      ] :
       [];
     return pages.map(page => {
       if (page.termType !== 'NamedNode' && page.termType !== 'BlankNode') {

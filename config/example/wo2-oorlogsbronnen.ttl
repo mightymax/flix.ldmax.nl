@@ -2,10 +2,16 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> . # XML Schema Definition
 @prefix flix: <https://erfgoedflix.nl/vocabulary#> .
 @prefix comunica: <https://comunica.dev/vocabulary#> .
-@prefix : <myflix> .
+@prefix erfgoedflix: <https://erfgoedflix.ldmax.nl/> .
 
-: a sdo:WebPage ;
-  sdo:creator :Creator ;  
+erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
+  # Koppel deze configuratie aan de Flix:
+  sdo:isPartOf erfgoedflix: ;
+
+  # De sdo:identifier wordt gebruikt om de URL van de Flix te bepalen, dus zorg dat deze uniek is.
+  # In dit geval is de URL van de Flix `https://erfgoedflix.ldmax.nl/wo2-oorlogsbronnen`.
+  sdo:identifier "wo2-oorlogsbronnen" ;
+  sdo:creator <http://oorlogsbronnen.nl> ;  
   sdo:name "Beeldbank WO2 Oorlogsbronnen" ;
   sdo:description """
     Beeldbank WO2 Oorlogsbronnen is een beeldbank met afbeeldingen van de Tweede Wereldoorlog 
@@ -14,9 +20,10 @@
     """;
   sdo:dateCreated "2023-10-01T00:00:00Z"^^xsd:dateTime ;
   sdo:dateModified "2023-10-01T00:00:00Z"^^xsd:dateTime ;
+  # De carouselItems worden gebruikt om de afbeeldingen in de carousel te tonen.
   comunica:settings [
     comunica:type "sparql" ;
-    comunica:query "config/queries/carouselItems.rq"^^flix:file ;
+    comunica:query "config/example/queries/carouselItems.rq"^^flix:file ;
     comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
   ] ;
   sdo:hasPart [
@@ -26,7 +33,7 @@
     sdo:identifier 'bombardement' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/queries/bombardementen.rq'^^flix:file ;
+      comunica:query 'config/example/queries/bombardementen.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ], [
@@ -36,7 +43,7 @@
     sdo:identifier 'bevrijding' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/queries/bevrijding.rq'^^flix:file ;
+      comunica:query 'config/example/queries/bevrijding.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ], [
@@ -46,7 +53,7 @@
     sdo:identifier 'luchtfotografie' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/queries/luchtfotografie.rq'^^flix:file ;
+      comunica:query 'config/example/queries/luchtfotografie.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ], [
@@ -56,13 +63,25 @@
     sdo:identifier 'meidagen-1940' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/queries/meidagen-1940.rq'^^flix:file ;
+      comunica:query 'config/example/queries/meidagen-1940.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ]
    .
 
-:Creator a sdo:Organization ;
+ <https://www.ldmax.nl> a sdo:Organization ;
+  sdo:name "LDMax" ;
+  sdo:logo "https://www.ldmax.nl/ldmax-logo.svg"^^xsd:anyURI ;
+  sdo:description """
+    [LDMax](https://www.ldmax.nl) LDMax is een one-stop applicatie gericht op gebruiksgemak voor de instelling die Linked Data wil publiceren.
+
+    LDMax is bedacht en ontworpen voor organisaties op het gebied van cultuur, erfgoed, onderwijs en onderzoek. 
+    LDMax probeert zich te onderscheiden door een pragmatische aanpak specifiek voor de erfgoedsector, 
+    met betaalbare licentiekosten zonder prijs-per-triple model.
+  """ ;
+  sdo:url "https://www.ldmax.nl"^^xsd:anyURI .
+
+<http://oorlogsbronnen.nl> a sdo:Organization ;
     sdo:name "Netwerk Oorlogsbronnen" ;
     sdo:logo "https://upload.wikimedia.org/wikipedia/commons/4/48/Logo_Netwerk_Oorlogsbronnen.jpg"^^xsd:anyURI ;
     sdo:description """
@@ -73,5 +92,4 @@
       binnen- en buitenland.
       """;
     sdo:url "http://oorlogsbronnen.nl"^^xsd:anyURI .
-
  

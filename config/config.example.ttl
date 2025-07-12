@@ -5,9 +5,9 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> . # XML Schema Definition
 @prefix flix: <https://erfgoedflix.nl/vocabulary#> .
 @prefix comunica: <https://comunica.dev/vocabulary#> .
-@prefix : <https://erfgoedflix.ldmax.nl/> .
+@prefix erfgoedflix: <https://erfgoedflix.ldmax.nl/> .
 
-: a sdo:WebApplication ;
+erfgoedflix: a sdo:WebApplication ;
   # Dit wordt de titel van de website:
   sdo:name "LDMax Erfgoed Flix" ;
   # Dit is de beschrijving van de website:
@@ -18,93 +18,8 @@
   """ ;
   sdo:url "https://erfgoedflix.ldmax.nl/" ;
   sdo:creator <https://www.ldmax.nl> ; # De organisatie die deze Flix beheert.
-  # De Flix is een onderdeel van de website, dus we gebruiken sdo:isPartOf om de relatie aan te geven.
-  sdo:hasPart :WO2-Oorlogsbronnen ;
 .
 
-:WO2-Oorlogsbronnen a sdo:WebPage ;
-  # De sdo:identifier wordt gebruikt om de URL van de Flix te bepalen, dus zorg dat deze uniek is.
-  # In dit geval is de URL van de Flix `https://erfgoedflix.ldmax.nl/wo2-oorlogsbronnen`.
-  sdo:identifier "wo2-oorlogsbronnen" ;
-  sdo:creator :Oorlogsbronnen ;  
-  sdo:name "Beeldbank WO2 Oorlogsbronnen" ;
-  sdo:description """
-    Beeldbank WO2 Oorlogsbronnen is een beeldbank met afbeeldingen van de Tweede Wereldoorlog 
-    uit de collectie van WO2 Oorlogsbronnen. 
-    De beelden zijn afkomstig van verschillende archieven en instellingen in Nederland.
-    """;
-  sdo:dateCreated "2023-10-01T00:00:00Z"^^xsd:dateTime ;
-  sdo:dateModified "2023-10-01T00:00:00Z"^^xsd:dateTime ;
-  # De carouselItems worden gebruikt om de afbeeldingen in de carousel te tonen.
-  comunica:settings [
-    comunica:type "sparql" ;
-    comunica:query "config/example/queries/carouselItems.rq"^^flix:file ;
-    comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
-  ] ;
-  sdo:hasPart [
-    a sdo:WebPage ;
-    sdo:name "Bombardementen" ;
-    sdo:description "Afbeeldingen van bombardementen uit [WO2 Oorlogsbronnen](http://oorlogsbronnen.nl)" ;
-    sdo:identifier 'bombardement' ;
-    comunica:settings [
-      comunica:type "sparql" ;
-      comunica:query 'config/example/queries/bombardementen.rq'^^flix:file ;
-      comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
-    ]; 
-  ], [
-    a sdo:WebPage ;
-    sdo:name "Bevrijding" ;
-    sdo:description "Afbeeldingen van de bevrijding uit [WO2 Oorlogsbronnen](http://oorlogsbronnen.nl)" ;
-    sdo:identifier 'bevrijding' ;
-    comunica:settings [
-      comunica:type "sparql" ;
-      comunica:query 'config/example/queries/bevrijding.rq'^^flix:file ;
-      comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
-    ]; 
-  ], [
-    a sdo:WebPage ;
-    sdo:name "Luchtfotografie" ;
-    sdo:description "Afbeeldingen van Luchtfotografie uit [WO2 Oorlogsbronnen](http://oorlogsbronnen.nl)" ;
-    sdo:identifier 'luchtfotografie' ;
-    comunica:settings [
-      comunica:type "sparql" ;
-      comunica:query 'config/example/queries/luchtfotografie.rq'^^flix:file ;
-      comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
-    ]; 
-  ], [
-    a sdo:WebPage ;
-    sdo:name "Meidagen 1940" ;
-    sdo:description "Afbeeldingen van de Meidagen 1940 uit [WO2 Oorlogsbronnen](http://oorlogsbronnen.nl)" ;
-    sdo:identifier 'meidagen-1940' ;
-    comunica:settings [
-      comunica:type "sparql" ;
-      comunica:query 'config/example/queries/meidagen-1940.rq'^^flix:file ;
-      comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
-    ]; 
-  ]
-   .
+# Voeg extra configuraties toe aan de Flix:
+[] flix:loadConfig "config/example/wo2-oorlogsbronnen.ttl" .
 
- <https://www.ldmax.nl> a sdo:Organization ;
-  sdo:name "LDMax" ;
-  sdo:logo "https://www.ldmax.nl/ldmax-logo.svg"^^xsd:anyURI ;
-  sdo:description """
-    [LDMax](https://www.ldmax.nl) LDMax is een one-stop applicatie gericht op gebruiksgemak voor de instelling die Linked Data wil publiceren.
-
-    LDMax is bedacht en ontworpen voor organisaties op het gebied van cultuur, erfgoed, onderwijs en onderzoek. 
-    LDMax probeert zich te onderscheiden door een pragmatische aanpak specifiek voor de erfgoedsector, 
-    met betaalbare licentiekosten zonder prijs-per-triple model.
-  """ ;
-  sdo:url "https://www.ldmax.nl"^^xsd:anyURI .
-
-:Oorlogsbronnen a sdo:Organization ;
-    sdo:name "Netwerk Oorlogsbronnen" ;
-    sdo:logo "https://upload.wikimedia.org/wikipedia/commons/4/48/Logo_Netwerk_Oorlogsbronnen.jpg"^^xsd:anyURI ;
-    sdo:description """
-      [Oorlogsbronnen.nl ](http://oorlogsbronnen.nl) is het startpunt voor iedereen die meer wil weten over de Tweede Wereldoorlog in Nederland. 
-      De verhalen van de oorlog liggen verscholen in miljoenen originele foto’s, objecten, brieven, administraties, 
-      dagboeken, affiches, krantenberichten, filmbeelden, et cetera. Deze ‘stille getuigen’ zijn 
-      afkomstig uit de collecties van meer dan 250 archiefinstellingen, musea, herinneringscentra en bibliotheken in 
-      binnen- en buitenland.
-      """;
-    sdo:url "http://oorlogsbronnen.nl"^^xsd:anyURI .
- 
