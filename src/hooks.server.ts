@@ -1,5 +1,5 @@
-import { type Handle } from '@sveltejs/kit';
-import Flix from '$lib/Flix';
+import type { Handle } from '@sveltejs/kit/hooks';
+import Flix from '#lib/Flix.js';
 
 
 export const handle: Handle = async ({ event, resolve }) => {

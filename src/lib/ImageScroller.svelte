@@ -2,6 +2,8 @@
   import type { HTMLImgAttributes } from 'svelte/elements';
   import { ControlButton, Img } from 'flowbite-svelte';
   import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
+  import type { Path } from '$app/types';
 
   let { images, ..._restProps }: { images: (HTMLImgAttributes & {href: string})[]} = $props();
 
@@ -38,7 +40,7 @@
         src={image.src}
         alt={image.alt || 'Image'}
         class="inline-block h-48 object-cover rounded mr-4 shadow cursor-pointer"
-        onclick={() => goto(image.href)}
+        onclick={() => goto(resolve(image.href.slice(1) as Path))}
       />
     {/each}
   </div>

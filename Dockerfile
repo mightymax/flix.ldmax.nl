@@ -1,12 +1,12 @@
-FROM node:22.14 AS builder
+FROM node:24-trixie-slim AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
 RUN npm run build
 RUN npm prune --omit=dev
 
-FROM node:22.14
+FROM node:24-trixie-slim
 WORKDIR /app
 COPY --from=builder /app/build build/
 COPY --from=builder /app/node_modules node_modules/

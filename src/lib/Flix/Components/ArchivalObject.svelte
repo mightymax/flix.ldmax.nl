@@ -2,7 +2,7 @@
   import { Badge, Heading, Img, P } from 'flowbite-svelte';
   import propertyMapping from '../helpers/propertyMapping';
   const { bindings, ...others }: { bindings: {p: string, o: string}[] } & {[key: string]: unknown} = $props();
-  
+
   function getProperties(property: string, onlyLiterals: boolean = false): { label: string; values: string[] } {
     const entry = propertyMapping.get(property);
     if (!entry) return { label: property, values: [] };
@@ -31,7 +31,7 @@
   <Img src={image} alt={name} class="max-w-lg rounded-lg mb-4" />
 {/each}
 {#if getProperties('source')?.values.length > 0}
-  <P class="text-lg mb-4">Bron: <a href="{getProperties('source')?.values.shift()}">{getProperties('source')?.values.shift()}</a></P>
+  <P class="text-lg mb-4">Bron: <a rel="external" href="{getProperties('source')?.values.shift()}">{getProperties('source')?.values.shift()}</a></P>
 {/if}
 {#if getProperties('rights')?.values.length > 0}
   <P class="text-lg mb-4">Rechten: {getProperties('rights')?.values.shift()}</P>

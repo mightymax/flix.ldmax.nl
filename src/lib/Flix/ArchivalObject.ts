@@ -1,6 +1,6 @@
 import type RDF from '@rdfjs/types';
 import ns from './namespaces';
-import type Flix from '$lib/Flix';
+import type Flix from '#lib/Flix.js';
 import { Engine } from './Engine';
 export default class ArchivalObject {
 
@@ -19,19 +19,19 @@ export default class ArchivalObject {
 
   public get name() {
     return this.getProperties(ns.sdo.name as unknown as RDF.NamedNode);
-  } 
+  }
 
   public get description() {
     return this.getProperties(ns.sdo.description);
-  } 
+  }
 
   public get imageUrl() {
     return this.getProperties(ns.sdo.imageUrl);
-  } 
+  }
 
   public get dateCreated() {
     return this.getProperties(ns.sdo.dateCreated);
-  } 
+  }
 
   public toJson() {
     return {

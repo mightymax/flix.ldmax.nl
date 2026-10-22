@@ -1,5 +1,5 @@
 import type RDF from '@rdfjs/types';
-import Flix from '$lib/Flix';
+import Flix from '#lib/Flix.js';
 import { queryParser, queryGenerator } from './helpers/queryParser';
 import { QueryEngine } from '@comunica/query-sparql'
 import ns from './namespaces';

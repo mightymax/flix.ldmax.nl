@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ArchivalObject from "$lib/Flix/Components/ArchivalObject.svelte";
+    import ArchivalObject from "#lib/Flix/Components/ArchivalObject.svelte";
   import { Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
   let { data } = $props();
   const truncate = (text: string, length: number = 50) => {

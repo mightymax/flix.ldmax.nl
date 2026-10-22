@@ -63,7 +63,7 @@ erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
     sdo:identifier 'meidagen-1940' ;
     comunica:settings [
       comunica:type "sparql" ;
-      comunica:query 'config/example/wo2-oorlogsbronnen/meidagen-1940.rq'^^flix:file ;
+      comunica:query 'config/example/wo2-oorlogsbronnen/Meidagen-1940.rq'^^flix:file ;
       comunica:source  "https://sparql.ldmax.nl/wo2-oorlogsbronnen"
     ]; 
   ]

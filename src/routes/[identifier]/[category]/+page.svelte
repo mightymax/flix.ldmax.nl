@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
+  import type { Path } from '$app/types';
   import { Gallery , P, Heading, Popover, Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
   let loading = $state(true);
   import { onMount } from 'svelte';
@@ -32,7 +34,7 @@
   <P class="mb-4">{@html data.page.description}</P>
   <Gallery items={images} class="grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
   {#snippet figure(item)}
-    <a href="{(item as {href: string}).href}">
+    <a href={resolve((item as {href: string}).href.slice(1) as Path)}>
       <img src={item.src} alt={item.alt} id={(item as {id: string}).id} class="h-auto max-w-full" />
     </a>
     <Popover class="w-64 text-sm font-light " placement="bottom-end"  triggeredBy="#{(item as {id: string}).id}" trigger="hover">{item.alt}</Popover>

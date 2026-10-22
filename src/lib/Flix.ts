@@ -1,6 +1,6 @@
 import type RDF from '@rdfjs/types';
 import { Store, Parser, Writer } from 'n3';
-import ns from '$lib/Flix/namespaces.js';
+import ns from '#lib/Flix/namespaces.js';
 import fs from 'fs/promises';
 import { marked } from "marked";
 import { readFileSync } from 'fs';
@@ -18,7 +18,7 @@ export default class Flix {
   private static instance: Flix | undefined = undefined;
 
   public flix: RDF.NamedNode | RDF.BlankNode | undefined = undefined;
-  
+
   protected constructor(flix?: RDF.NamedNode | RDF.BlankNode) {
     if (flix) this.flix = flix;
     // Private constructor to enforce singleton pattern
@@ -164,7 +164,7 @@ export default class Flix {
   }
 
   public get logo(): string | undefined {
-    return this.getProperty(this.flix, ns.sdo.logo) 
+    return this.getProperty(this.flix, ns.sdo.logo)
   }
 
   public get about() {

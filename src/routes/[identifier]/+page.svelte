@@ -1,35 +1,34 @@
 <script lang="ts">
-  import type { HTMLImgAttributes } from "svelte/elements";
+  import { SvelteMap } from 'svelte/reactivity';
+  import { resolve } from '$app/paths';
   import { Spinner, Carousel, Controls, Heading, Button, Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
-  import ImageScroller from '$lib/ImageScroller.svelte';
+  import ImageScroller from '#lib/ImageScroller.svelte';
   import { onMount } from 'svelte';
   import { ChevronDoubleRightOutline } from 'flowbite-svelte-icons';
   const { data } = $props();
   const images = $derived(data.carouselItems ?? []);
-  let archivalObjectsPerPage = $state(new Map<string, FlixObject.ArchivalObject[]>())
+  const archivalObjectsPerPage = new SvelteMap<string, FlixObject.ArchivalObject[]>()
   onMount(() => {
     (data.pages ?? []).forEach(async (page) => {
       fetch(`/${data.identifier}/${page.identifier}`, { headers: { 'Accept': 'application/json' } })
         .then(response => response.json())
         .then((archivalObjects: FlixObject.ArchivalObject[]) => {
           archivalObjectsPerPage.set(page.identifier!, archivalObjects);
-          archivalObjectsPerPage = new Map(archivalObjectsPerPage);
         })
         .catch(e =>console.error(`Failed to load "/${data.identifier}/${page.identifier}": ${e.message}`))
     });
-  }); 
-  let image: HTMLImgAttributes | undefined = $state(undefined);
+  });
 </script>
 <Breadcrumb aria-label="Kruimelpad" class="mb-4">
   <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
   <BreadcrumbItem href="/{data.identifier}">{data.name}</BreadcrumbItem>
 </Breadcrumb>
-<Carousel {images} onchange={detail => image = detail} class="min-h-[480px] mb-4">
+<Carousel {images} class="min-h-[480px] mb-4">
     {#snippet slide({ index, Slide })}
-      <a href="/{data.identifier}/{images[index]?.id}">
+      <a href={resolve('/[identifier]/[category]', { identifier: data.identifier, category: images[index]?.id ?? '' })}>
         <Slide image={images[index]} />
       </a>
-      <a href="/{data.identifier}/{images[index]?.id}">
+      <a href={resolve('/[identifier]/[category]', { identifier: data.identifier, category: images[index]?.id ?? '' })}>
         <Heading tag="h2" class="uppercase h-20 rounded-sm bg-gray-300/50 p-5 text-center relative">{images[index].title}</Heading>
       </a>
     {/snippet}

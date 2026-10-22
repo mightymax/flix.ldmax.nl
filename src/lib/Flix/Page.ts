@@ -1,5 +1,5 @@
 import type RDF from '@rdfjs/types';
-import type Flix from '$lib/Flix.js';
+import type Flix from '#lib/Flix.js';
 import ns from './namespaces';
 import ArchivalObject from './ArchivalObject';
 import { Engine } from './Engine';
@@ -19,7 +19,7 @@ export default class Page {
 
   public get description() {
     const description = this.flix.getProperty(this.page, ns.sdo.description)
-    return description 
+    return description
       ? marked.parse(description.trim().replace(/^\s+/gm, ''), { async: false})
       : description
   }
@@ -34,7 +34,7 @@ export default class Page {
     const result = await engine.query(this.page, { replace: (rq) => rq.replaceAll('#{ITEM_FILTER}', `filter(?heritageObject = <${subject}>)`)});
     if (result.length === 0) {
       return undefined;
-    } 
+    }
     return ArchivalObject.fromQuads(this.flix, result).shift();
   }
 
