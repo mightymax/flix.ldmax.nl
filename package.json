@@ -11,12 +11,13 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"deploy": "docker build --platform linux/arm64 -t ghcr.io/mightymax/flix.ldmax.nl:latest . && docker push ghcr.io/mightymax/flix.ldmax.nl:latest && kubectl rollout restart deployment erfgoedflix -n ldmax",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"preversion": "node scripts/preversion-check.js",
+		"postversion": "git push origin main --follow-tags"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.1.1",

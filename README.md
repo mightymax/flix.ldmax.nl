@@ -24,3 +24,22 @@ Using the example configuration:
 ```bash
 docker run -it --rm -p 3000:3000 ghcr.io/mightymax/flix.ldmax.nl
 ``` 
+
+## Releases en deployment
+
+Werkmap: `~/Code/cluster/flix.ldmax.nl`. Commit en push wijzigingen eerst naar `main`.
+
+```sh
+npm version patch  # of minor / major
+```
+
+Dit maakt een versiecommit en v-tag en pusht beide automatisch naar GitHub. De
+releaseworkflow bouwt uitsluitend `linux/arm64`, publiceert naar
+`ghcr.io/mightymax/flix.ldmax.nl` en schrijft de versie plus image-digest naar
+`infrastructure/overlays/prod/kustomization.yaml` op de branch `release`.
+Argo CD volgt die branch en synchroniseert automatisch. Geen handmatige build,
+`kubectl apply` of rollout restart nodig. Secrets blijven buiten Git.
+
+Controle: `gh run list --workflow release.yml` en
+`kubectl -n argocd get application erfgoedflix`.
+Een mislukte build wijzigt de releasebranch niet.

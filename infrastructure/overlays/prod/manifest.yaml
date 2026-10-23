@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erfgoedflix
+  namespace: ldmax
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: erfgoedflix
+  template:
+    metadata:
+      labels:
+        app: erfgoedflix
+    spec:
+      containers:
+      - name: erfgoedflix
+        image: ghcr.io/mightymax/flix.ldmax.nl:latest
+        ports:
+        - containerPort: 3000
+      imagePullSecrets:
+      - name: ghcr-creds
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: erfgoedflix
+  namespace: ldmax
+spec:
+  selector:
+    app: erfgoedflix
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: erfgoedflix-ingress
+  namespace: ldmax
+spec:
+  ingressClassName: public
+  rules:
+  - host: www.erfgoedflix.nl
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: erfgoedflix
+            port:
+              number: 80
+  - host: erfgoedflix.nl
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: erfgoedflix
+            port:
+              number: 80
