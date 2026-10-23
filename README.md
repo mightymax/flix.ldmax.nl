@@ -43,3 +43,7 @@ Argo CD volgt die branch en synchroniseert automatisch. Geen handmatige build,
 Controle: `gh run list --workflow release.yml` en
 `kubectl -n argocd get application erfgoedflix`.
 Een mislukte build wijzigt de releasebranch niet.
+
+De container gebruikt `config/config.example.ttl` als standaard wanneer het lokale,
+door Git genegeerde `config/config.ttl` ontbreekt. Houd productieconfiguratie dus
+in versiebeheer (of configureer daarvoor expliciet een mount).

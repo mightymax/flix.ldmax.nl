@@ -11,6 +11,7 @@ WORKDIR /app
 COPY --from=builder /app/build build/
 COPY --from=builder /app/node_modules node_modules/
 COPY ./config /app/config
+RUN test -f config/config.ttl || cp config/config.example.ttl config/config.ttl
 COPY package.json .
 EXPOSE 3000
 ENV NODE_ENV=production
