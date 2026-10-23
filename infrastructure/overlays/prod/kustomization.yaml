@@ -3,5 +3,5 @@ kind: Kustomization
 resources:
   - manifest.yaml
 images:
-  - name: ghcr.io/mightymax/flix.ldmax.nl
+  - name: ghcr.io/mightymax/erfgoedflix-app
     newTag: latest

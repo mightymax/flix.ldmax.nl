@@ -22,7 +22,7 @@ This wil open your browser at http://localhost:5173 with the provided example co
 ## Using Docker
 Using the example configuration:
 ```bash
-docker run -it --rm -p 3000:3000 ghcr.io/mightymax/flix.ldmax.nl
+docker run -it --rm -p 3000:3000 ghcr.io/mightymax/erfgoedflix-app
 ``` 
 
 ## Releases en deployment
@@ -35,7 +35,7 @@ npm version patch  # of minor / major
 
 Dit maakt een versiecommit en v-tag en pusht beide automatisch naar GitHub. De
 releaseworkflow bouwt uitsluitend `linux/arm64`, publiceert naar
-`ghcr.io/mightymax/flix.ldmax.nl` en schrijft de versie plus image-digest naar
+`ghcr.io/mightymax/erfgoedflix-app` en schrijft de versie plus image-digest naar
 `infrastructure/overlays/prod/kustomization.yaml` op de branch `release`.
 Argo CD volgt die branch en synchroniseert automatisch. Geen handmatige build,
 `kubectl apply` of rollout restart nodig. Secrets blijven buiten Git.

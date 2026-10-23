@@ -13,7 +13,7 @@ jobs:
   release:
     runs-on: ubuntu-24.04-arm
     env:
-      IMAGE_REPO: ghcr.io/mightymax/flix.ldmax.nl
+      IMAGE_REPO: ghcr.io/mightymax/erfgoedflix-app
     steps:
       - name: Checkout tag
         uses: actions/checkout@v4

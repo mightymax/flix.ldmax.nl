@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: erfgoedflix
-        image: ghcr.io/mightymax/flix.ldmax.nl:latest
+        image: ghcr.io/mightymax/erfgoedflix-app:latest
         ports:
         - containerPort: 3000
       imagePullSecrets:
