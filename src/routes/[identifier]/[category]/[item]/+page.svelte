@@ -1,15 +1,11 @@
 <script lang="ts">
-    import ArchivalObject from "#lib/Flix/Components/ArchivalObject.svelte";
-  import { Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
+  import { resolve } from '$app/paths';
+  import { ArrowLeftOutline, ChevronRightOutline } from 'flowbite-svelte-icons';
+  import ArchivalObject from '#lib/Flix/Components/ArchivalObject.svelte';
   let { data } = $props();
-  const truncate = (text: string, length: number = 50) => {
-    return text.length > length ? text.substring(0, length) + '…' : text;
-  };
 </script>
-<Breadcrumb aria-label="Kruimelpad" class="mb-4">
-  <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
-  <BreadcrumbItem href="/{data.params.identifier}">{data.flixName}</BreadcrumbItem>
-  <BreadcrumbItem href="/{data.params.identifier}/{data.page.identifier}">{data.page.name}</BreadcrumbItem>
-  <BreadcrumbItem>{truncate(data.archivalObject?.name[0] ?? '')}</BreadcrumbItem>
-</Breadcrumb>
-<ArchivalObject bindings={data.bindings} />
+<div class="page-width detail-page">
+  <nav class="breadcrumbs" aria-label="Kruimelpad"><a href={resolve('/')}>Verhalen</a><ChevronRightOutline size="xs" /><a href={resolve('/[identifier]', {identifier: data.params.identifier})}>{data.flixName?.replace('Beeldbank ', '')}</a><ChevronRightOutline size="xs" /><a href={resolve('/[identifier]/[category]', {identifier: data.params.identifier, category: data.params.category})}>{data.page.name}</a><ChevronRightOutline size="xs" /><span aria-current="page">Beelddetail</span></nav>
+  <a class="text-link back-link" href={resolve('/[identifier]/[category]', {identifier: data.params.identifier, category: data.params.category})}><ArrowLeftOutline size="sm" />Terug naar {data.page.name}</a>
+  <ArchivalObject bindings={data.bindings} object={data.archivalObject} />
+</div>

@@ -1,21 +1,19 @@
 import type RDF from '@rdfjs/types';
-import { Store, Parser, Writer } from 'n3';
+import { Store, Writer } from 'n3';
 import ns from '#lib/Flix/namespaces.js';
-import fs from 'fs/promises';
 import { marked } from "marked";
-import { readFileSync } from 'fs';
+import { loadConfiguration } from './server/flix/configuration.js';
+import { fetchRepository, repositoryConfiguration } from './server/flix/repository.js';
+import { plainTextHtml } from './server/flix/plainText.js';
+import { sharedInitialization } from './server/flix/initialization.js';
 
-import path from 'path';
 import Page from './Flix/Page';
 import { Engine } from './Flix/Engine';
 
 export default class Flix {
   public store: Store = new Store();
 
-  /**
-   * Singleton instance of Flix
-   */
-  private static instance: Flix | undefined = undefined;
+  private static initialize = sharedInitialization(async () => new Flix().load());
 
   public flix: RDF.NamedNode | RDF.BlankNode | undefined = undefined;
 
@@ -24,53 +22,38 @@ export default class Flix {
     // Private constructor to enforce singleton pattern
   }
 
-  public static async getInstance(): Promise<Flix> {
-    if (!Flix.instance) {
-      Flix.instance = new Flix();
-      return Flix.instance.load()
-    } else {
-      return Promise.resolve(Flix.instance);
+  private static remote: Promise<Flix> | undefined;
+  private static remoteExpires = 0;
+
+  public static getInstance(): Promise<Flix> {
+    const repository = process.env.FLIX_REPOSITORY_URL;
+    if (!repository) return Flix.initialize();
+    if (!Flix.remote || Date.now() >= Flix.remoteExpires) {
+      Flix.remoteExpires = Infinity;
+      Flix.remote = fetchRepository(repository).then(stories => {
+        const config = repositoryConfiguration(stories);
+        const instance = new Flix(config.root);
+        instance.store = config.store;
+        Flix.remoteExpires = Date.now() + 60_000;
+        return instance;
+      }).catch(error => { Flix.remote = undefined; throw error; });
     }
+    return Flix.remote;
+  }
+
+  public static fromStory(story: Parameters<typeof repositoryConfiguration>[0][number]): Flix {
+    const config = repositoryConfiguration([story]);
+    const instance = new Flix(config.root);
+    instance.store = config.store;
+    return instance;
   }
 
   private async load(): Promise<Flix> {
-    if (this.flix) return this
-    const settingsPath = path.resolve('config/config.ttl');
-    console.log(`Loading Flix configuration from ${settingsPath}`);
-    const parser = new Parser();
-    const quads = parser.parse(readFileSync(settingsPath, 'utf-8'));
-    this.store.addQuads(quads)
-    let extraConfigQuads = quads.filter(quad => quad.predicate.equals(ns.flix.loadConfig));
-    while(true) {
-      if (extraConfigQuads.length === 0) break;
-      for (const config of extraConfigQuads) {
-        if (config.object.termType !== 'Literal') {
-          throw new Error(`Expected Literal for config, got ${config.object.termType}`);
-        }
-        console.log(`Loading extra Flix configuration from ${config.object.value}`);
-        const quads = parser.parse(readFileSync(path.resolve(config.object.value), 'utf-8'));
-        this.store.addQuads(quads);
-        extraConfigQuads = quads.filter(quad => quad.predicate.equals(ns.flix.loadConfig));
-      }
-    }
-    return await fs.readFile(settingsPath, 'utf-8')
-      .then(text => {
-        const quads = parser.parse(text);
-        this.store.addQuads(quads)
-        const flix = this.store.getQuads(null, ns.rdf.type, ns.sdo.WebApplication, null).shift()?.subject;
-        if (!flix) {
-          throw new Error('Flix instance not found in configuration.');
-        }
-        if (flix.termType !== 'NamedNode' && flix.termType !== 'BlankNode') {
-          throw new Error(`Expected NamedNode or BlankNode, got ${flix.termType} for Flix instance.`);
-        }
-        this.flix = flix
-        return this;
-      })
-      .catch((error) => {
-        console.error(`Error loading Flix configuration from ${path}:`, error);
-        throw error;
-      });
+    if (this.flix) return this;
+    const { store, root } = await loadConfiguration();
+    this.store = store;
+    this.flix = root as RDF.NamedNode | RDF.BlankNode;
+    return this;
   }
 
   public async getConfig(format: string = 'text/turtle'): Promise<string | undefined> {
@@ -89,6 +72,12 @@ export default class Flix {
   }
 
   public async carouselItems() {
+    if (this.getProperty(this.flix, ns.flix.managedStory) === 'true') {
+      return Promise.all(this.pages.map(async page => {
+        const first = (await page.query({ itemsPerPage: 1 }))[0]?.toJson();
+        return { title: page.name ?? '', src: first?.imageUrl[0] || this.getProperty(this.flix, ns.sdo.image) || '', id: page.identifier ?? '' };
+      }));
+    }
     const engine = new Engine(this);
     await this.load()
     const store = new Store(await engine.query(this.flix!));
@@ -160,6 +149,7 @@ export default class Flix {
 
   public get description(): string {
     const description = this.getProperty(this.flix, ns.sdo.description)
+    if (this.getProperty(this.flix, ns.flix.managedStory) === 'true') return plainTextHtml(description ?? '');
     return description ? marked.parse(description.trim().replace(/^\s+/gm, ''), { async: false}) : ''
   }
 

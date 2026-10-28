@@ -16,7 +16,12 @@ export const load = async ( { params, locals } ) => {
   }
   let bindings: {o: string, p: string}[] = []
   try {
-    bindings = JSON.parse(`[${await archivalObject.loadBindings()}]`);
+    bindings = (await archivalObject.loadBindings()).flatMap(binding => {
+      const predicate = binding.get('p');
+      const object = binding.get('o');
+      if (!predicate || !object) return [];
+      return [{p: predicate.value, o: object.termType === 'Literal' ? JSON.stringify(object.value) : object.value}];
+    });
   } catch {
     console.error(`Error fetching bindings for item "${item}" in page "${params.category}" of flix "${params.identifier}".`);
   }

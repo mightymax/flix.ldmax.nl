@@ -1,13 +1,18 @@
 import type RDF from '@rdfjs/types';
+import { Store } from 'n3';
+import type { ArchivalObject as ArchivalObjectDTO } from '../types.js';
 import ns from './namespaces';
 import type Flix from '#lib/Flix.js';
+import { mediaFromQuads } from '../server/flix/media.js';
 import { Engine } from './Engine';
 export default class ArchivalObject {
+  private mediaQuads: RDF.Quad[];
 
   public constructor(private flix: Flix, private subject: RDF.Quad_Subject, private quads: RDF.Quad[]) {
     if (subject.termType !== 'NamedNode' && subject.termType !== 'BlankNode') {
       throw new Error(`Invalid subject type: ${subject.termType}. Expected NamedNode or BlankNode.`);
     }
+    this.mediaQuads = quads;
     this.quads = quads.filter(q => q.subject.equals(subject));
   }
 
@@ -33,22 +38,23 @@ export default class ArchivalObject {
     return this.getProperties(ns.sdo.dateCreated);
   }
 
-  public toJson() {
+  public toJson(): ArchivalObjectDTO {
     return {
       id: this.quads[0].subject.value,
       name: this.name,
       description: this.description,
       imageUrl: this.getProperties(ns.sdo.imageUrl),
-      dateCreated: this.dateCreated
+      dateCreated: this.dateCreated,
+      media: mediaFromQuads(this.mediaQuads, this.subject)
     };
   }
 
   public static fromQuads(flix: Flix, quads: RDF.Quad[]): ArchivalObject[] {
+    quads = new Store(quads).getQuads(null, null, null, null);
     const nodes = quads.filter(q => q.predicate.equals(ns.rdf.type) && q.object.equals(ns.sdo.ArchivalObject)).map(q => q.subject as RDF.NamedNode);
     const archivalObjects: ArchivalObject[] = [];
     for (const n of nodes) {
-      const $quads = quads.filter(q => q.subject.equals(n));
-      archivalObjects.push(new ArchivalObject(flix, n, $quads));
+      archivalObjects.push(new ArchivalObject(flix, n, quads));
     }
     return archivalObjects;
   }

@@ -1,87 +1,28 @@
 <script lang="ts">
-  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Heading, P, Card, Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
-  import { Drawer, Button, CloseButton } from "flowbite-svelte";
-  import { InfoCircleSolid, ArrowRightOutline } from "flowbite-svelte-icons";
-  import { page } from "$app/state";
-	import '../app.css';
-	let {data} = $props();
-  let hidden = $state(true);
-  let activeUrl = $derived(page.url.pathname);
+  import { resolve } from '$app/paths';
+  import { ArrowRightOutline } from 'flowbite-svelte-icons';
+  import CollectionCover from '#lib/components/CollectionCover.svelte';
+  let { data } = $props();
 </script>
-
-<svelte:head>
-  <title>{data.name}</title>
-</svelte:head>
-<div class="relative px-8">
-
-  <Navbar class="fixed start-0 top-0 z-20 w-full  bg-gray-200/90 px-2 py-2.5 sm:px-4">
-    <NavBrand href="/">
-      {#if data.logo}
-        <img src={data.logo} class="me-3 h-6 sm:h-9" alt={data.name} />
-      {/if}
-      <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">{data.name}</span>
-    </NavBrand>
-    <div class="flex md:order-2">
-      <Button size="sm" class="cursor-pointer" onclick={() => (hidden = false)}><InfoCircleSolid/>
-      </Button>
-      <NavHamburger />
-    </div>
-    <NavUl {activeUrl}>
-      <NavLi href="/">Home</NavLi>
-      {#each data.flixers as flix}
-        <NavLi href="/{flix.identifier}">{flix.name}</NavLi>
+<svelte:head><title>Ontdek de verhalen — Erfgoedflix</title><meta name="description" content="Ontdek erfgoed in beeld. Blader door open verhalen, historische fotografie en verhalen uit het verleden." /></svelte:head>
+<div class="page-width home-page">
+  <section class="home-intro">
+    <p class="eyebrow"><span class="accent-line"></span> Een andere kijk op vroeger</p>
+    <h1>Er is zoveel<br />te <em>ontdekken.</em></h1>
+    <p class="intro-copy">Bijzondere beelden, grote verhalen en kleine details.<br class="desktop-break" /> Dwaal door het verleden, één verhaal tegelijk.</p>
+    <a class="text-link" href="#verhalen">Ontdek de verhalen <ArrowRightOutline size="sm" /></a>
+    <span class="intro-index" aria-hidden="true">EF / OPEN ARCHIEF</span>
+  </section>
+  <section id="verhalen" class="home-collections">
+    <div class="section-heading"><div><p class="eyebrow">Open om te ontdekken</p><h2>De verhalen</h2></div><span class="muted">{String(data.flixers.length).padStart(2, '0')} verhalen</span></div>
+    <div class="collection-grid">
+      {#each data.flixers as flix, index (flix.identifier)}
+        <a class="collection-card" href={resolve('/[identifier]', {identifier: flix.identifier!})}>
+          <CollectionCover title={flix.name ?? 'Collectie'} src={flix.coverImage} headline={flix.headline} alternate={index % 2 === 1} />
+          <div class="collection-card-content"><h3>{flix.name?.replace('Beeldbank ', '')}</h3><div class="rich-text collection-description">{@html flix.description ?? ''}</div><span class="text-link">Bekijk het verhaal <ArrowRightOutline size="sm" /></span></div>
+        </a>
       {/each}
-    </NavUl>
-  </Navbar>
+    </div>
+  </section>
+  <section class="home-note"><span class="eyebrow">Verbonden erfgoed</span><h2>Verschillende bronnen.<br />Eindeloos veel verhalen.</h2><div class="rich-text">{@html data.description}</div></section>
 </div>
-<main class="mt-20 p-8 min-h-screen flex flex-col">
-<Breadcrumb aria-label="Kruimelpad" class="mb-4">
-  <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
-</Breadcrumb>
-  <div class="flex-1">
-    <Heading tag="h1" class="text-3xl font-bold mb-4 text-primary-600">{data.name}</Heading>
-    <P class="mb-6 text-xl">
-      {@html data.description}
-    </P>
-    <Heading tag="h2" class="text-2xl uppercase text-gray-700 mb-4">Beschikbare erfgoedflixers<sup class="text-primary-500">*</sup></Heading>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    {#each data.flixers as flix}
-     <Card href="/{flix.identifier}" class="p-4 sm:p-6 md:p-8">
-       <Heading tag="h3" class="text-xl mb-4 text-gray-600">{flix.name}</Heading>
-       <p class="font-normal text-gray-700 dark:text-gray-400">
-         {@html flix.description}
-        </p>
-        <Button class="px-4 mt-4 cursor-pointer">Bekijk erfgoedflix <ArrowRightOutline class="ms-2 h-5 w-5" /></Button>
-     </Card>
-    {/each}
-     </div>
-
-    <p class="text-sm text-gray-500 mt-4"><sup class="text-primary-500">*</sup> Een "erfgoedflix" is een thematische samengesteelde beeldbank. De flix kan uit verschillende bronnen data gebruiken.</p>
-  </div>
-</main>
-
-
-<Drawer bind:hidden={hidden} id="sidebar1" aria-controls="sidebar1" aria-labelledby="sidebar1">
-  <div class="flex items-center justify-between">
-    <h5 id="drawer-label" class="mb-4 inline-flex items-center text-base font-semibold text-gray-500 dark:text-gray-400">
-      <InfoCircleSolid class="me-2.5 h-5 w-5" />Info
-    </h5>
-    <CloseButton onclick={() => (hidden = true)} class="mb-4 dark:text-white" />
-  </div>
-  <Heading tag="h3" class="text-lg mb-4 uppercase">{data.name}</Heading>
-  <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
-    {@html data.about?.description}
-  </p>
-  {#if data.about?.creator}
-    <Heading tag="h4" class="text-lg mb-4 uppercase">Over de maker</Heading>
-    {#if data.about.creator.logo}
-      <img src={data.about.creator.logo} class="mb-4 h-16 w-16 " alt={data.about.creator.name} />
-    {/if}
-    {#if data.about.creator.url}
-      <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
-        {@html data.about.creator.description}
-      </p>
-      <Button href={data.about.creator.url} class="px-4">Bezoek website <ArrowRightOutline class="ms-2 h-5 w-5" /></Button>
-    {/if}
-  {/if}
-</Drawer>

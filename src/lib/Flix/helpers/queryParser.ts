@@ -1,3 +1,4 @@
+import {paginateQuery} from '../../server/flix/pagination.js';
 import { Parser, type ConstructQuery, Generator } from 'sparqljs';
 import path from 'path';
 import { readFile } from 'node:fs/promises';
@@ -19,8 +20,6 @@ export async function queryParser(opts: { queryObject: Literal, page?: number, i
   } else {
     content = opts.queryObject.value;
   }
-  content = content.replace(/limit \d+/gi, `limit ${limit}`);
-  content = content.replace(/offset \d+/gi, `offset ${offset}`);
   if (opts.replace) {
     content = opts.replace(content);
   }
@@ -28,6 +27,7 @@ export async function queryParser(opts: { queryObject: Literal, page?: number, i
   if (query.type !== 'query' || !query.queryType || query.queryType !== 'CONSTRUCT') {
     return Promise.reject(new Error(`De opgegeven query is geen CONSTRUCT query.`));
   }
+  paginateQuery(query, limit, offset);
   return query
 }
 

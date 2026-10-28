@@ -1,8 +1,9 @@
+import { error } from '@sveltejs/kit';
 export const load = async ({ locals, params }) => {
   const identifier = params.identifier;
   const flix = locals.flix.getFlix(identifier);
   if (!flix) {
-    return { status: 404, error: new Error('Flix not found') };
+    error(404, 'Collectie niet gevonden.');
   }
   const menu = flix.pages.map(page => {
     return {

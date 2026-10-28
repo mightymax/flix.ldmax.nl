@@ -1,50 +1,24 @@
 <script lang="ts">
-  import type { HTMLImgAttributes } from 'svelte/elements';
-  import { ControlButton, Img } from 'flowbite-svelte';
-  import { goto } from '$app/navigation';
-  import { resolve } from '$app/paths';
-  import type { Path } from '$app/types';
-
-  let { images, ..._restProps }: { images: (HTMLImgAttributes & {href: string})[]} = $props();
-
+  import { ChevronLeftOutline, ChevronRightOutline } from 'flowbite-svelte-icons';
+  import Artwork from './components/Artwork.svelte';
+  let { images, label = 'Beelden' }: {images: {href: string; src?: string; alt?: string; title?: string}[]; label?: string} = $props();
   let container: HTMLDivElement;
-
-  const scrollByAmount = 300;
-
-  function scrollLeft() {
-    container.scrollBy({ left: -scrollByAmount, behavior: 'smooth' });
-  }
-
-  function scrollRight() {
-    container.scrollBy({ left: scrollByAmount, behavior: 'smooth' });
+  function scroll(direction: number) {
+    container.scrollBy({left: direction * container.clientWidth * .8, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
   }
 </script>
-
-<style>
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-</style>
-<div class="relative w-100% overflow-hidden">
-  <!-- Scrollable image container -->
-  <div
-    bind:this={container}
-    class="flex overflow-x-auto scroll-smooth whitespace-nowrap no-scrollbar px-4 py-2"
-  >
-    {#each images as image}
-      <Img
-        src={image.src}
-        alt={image.alt || 'Image'}
-        class="inline-block h-48 object-cover rounded mr-4 shadow cursor-pointer"
-        onclick={() => goto(resolve(image.href.slice(1) as Path))}
-      />
+<div class="image-scroller">
+  <div class="image-track" bind:this={container}>
+    {#each images as image (image.href)}
+      <!-- URLs are resolved by the collection page before being passed in. -->
+      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+      <a class="image-card" href={image.href} aria-label={image.title || image.alt || 'Bekijk dit beeld'}>
+        <div class="image-card-visual"><Artwork src={image.src} alt={image.alt ?? image.title ?? 'Erfgoedbeeld'} /></div>
+        <span class="image-card-title">{image.title || image.alt || 'Bekijk dit beeld'}</span>
+      </a>
     {/each}
   </div>
-
-  <ControlButton forward={false} onclick={scrollLeft}/>
-  <ControlButton forward={true} onclick={scrollRight}/>
+  {#if images.length > 3}
+    <div class="scroller-controls"><span>Er is meer te zien</span><button class="icon-button" aria-label={`Vorige beelden: ${label}`} onclick={() => scroll(-1)}><ChevronLeftOutline size="sm" /></button><button class="icon-button" aria-label={`Volgende beelden: ${label}`} onclick={() => scroll(1)}><ChevronRightOutline size="sm" /></button></div>
+  {/if}
 </div>

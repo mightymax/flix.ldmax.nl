@@ -1,43 +1,19 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
-  import type { Path } from '$app/types';
-  import { Gallery , P, Heading, Popover, Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
-  let loading = $state(true);
-  import { onMount } from 'svelte';
-	onMount(() => loading = false);
-
-  const { data } = $props();
-  let i = 0
-  const images = $derived(
-    data.archivalObjects.map((archivalObject) => ({
-      src: archivalObject.imageUrl[0],
-      alt: archivalObject.description.join(' '),
-      id: `image-${i++}`,
-      href: `/${data.params.identifier}/${data.params.category}/${encodeURIComponent(archivalObject.id)}`
-    }))
-  );
+  import { ArrowUpRightFromSquareOutline, ChevronRightOutline } from 'flowbite-svelte-icons';
+  import Artwork from '#lib/components/Artwork.svelte';
+  let { data } = $props();
 </script>
-<Breadcrumb aria-label="Kruimelpad" class="mb-4">
-  <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
-  <BreadcrumbItem href="/{data.identifier}">{data.flixName}</BreadcrumbItem>
-  <BreadcrumbItem>{data.page.name}</BreadcrumbItem>
-</Breadcrumb>
-<svelte:head>
-  <title>{data.page.name}</title>
-</svelte:head>
-{#if loading}
-  <div class="flex items-center justify-center h-screen">
-    <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+<svelte:head><title>{data.page.name} — {data.flixName}</title></svelte:head>
+<div class="page-width category-page">
+  <nav class="breadcrumbs" aria-label="Kruimelpad"><a href={resolve('/')}>Verhalen</a><ChevronRightOutline size="xs" /><a href={resolve('/[identifier]', {identifier: data.params.identifier})}>{data.flixName?.replace('Beeldbank ', '')}</a><ChevronRightOutline size="xs" /><span aria-current="page">{data.page.name}</span></nav>
+  <header class="category-header"><div><p class="eyebrow">Het verhaal / het thema</p><h1>{data.page.name}</h1><div class="rich-text intro-copy">{@html data.page.description ?? ''}</div></div><span class="count-label">{data.archivalObjects.length} beelden geladen</span></header>
+  <div class="artwork-grid">
+    {#each data.archivalObjects as item (item.id)}
+      <a class="artwork-card" aria-label={item.name[0] ?? 'Bekijk dit beeld'} href={resolve('/[identifier]/[category]/[item]', {identifier: data.params.identifier, category: data.params.category, item: encodeURIComponent(item.id)})}>
+        <div class="artwork-visual"><Artwork src={item.imageUrl[0]} alt={item.name[0] ?? 'Erfgoedbeeld'} /><span class="artwork-open" aria-hidden="true"><ArrowUpRightFromSquareOutline size="sm" /></span></div>
+        <div class="artwork-caption"><h2>{item.name[0] ?? 'Zonder titel'}</h2>{#if item.dateCreated[0]}<span>{item.dateCreated[0]}</span>{/if}</div>
+      </a>
+    {:else}<p class="empty-state">In dit thema zijn nog geen beelden beschikbaar.</p>{/each}
   </div>
-{:else}
-  <Heading class="mb-4 text-md md:text-4xl" tag="h1">{data.page.name}</Heading>
-  <P class="mb-4">{@html data.page.description}</P>
-  <Gallery items={images} class="grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-  {#snippet figure(item)}
-    <a href={resolve((item as {href: string}).href.slice(1) as Path)}>
-      <img src={item.src} alt={item.alt} id={(item as {id: string}).id} class="h-auto max-w-full" />
-    </a>
-    <Popover class="w-64 text-sm font-light " placement="bottom-end"  triggeredBy="#{(item as {id: string}).id}" trigger="hover">{item.alt}</Popover>
-  {/snippet}
-  </Gallery>
-{/if}
+</div>

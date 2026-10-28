@@ -3,6 +3,7 @@ import Flix from '#lib/Flix.js';
 import { queryParser, queryGenerator } from './helpers/queryParser';
 import { QueryEngine } from '@comunica/query-sparql'
 import ns from './namespaces';
+import { iri } from '../stories/contract.js';
 
 type QueryReplaceFn = (rq: string) => string;
 type QueryOpts = Partial<{
@@ -57,7 +58,7 @@ export class Engine {
     const source = this.flix.getProperty(comunicaSettings, ns.comunica.source)
     if (!source) return Promise.reject(new Error(`Er is geen comunica:settings/comunica:source eigenschap gevonden voor node ${subject.value}.`));
 
-    const query = `SELECT * WHERE { <${subject.value}> ?p ?o }`;
+    const query = `SELECT * WHERE { ${iri(subject.value)} ?p ?o }`;
     return engine.queryBindings(query, {
       sources: [{
         type: this.flix.getProperty(comunicaSettings, ns.comunica.type) ?? 'sparql',

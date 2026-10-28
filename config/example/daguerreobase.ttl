@@ -9,6 +9,8 @@ erfgoedflix:Daguerreobase a sdo:WebPage ;
   sdo:identifier "Daguerreobase" ;
   sdo:creator <https://daguerreobase.org> ;  
   sdo:name "Daguerreobase" ;
+  # Optionele cover: voeg sdo:image <https://jouw-server.nl/cover.jpg> ; toe.
+  # Zonder cover verschijnt de collectietitel op een grafische achtergrond.
   sdo:description """
     Daguerreobase is een online applicatie die gedetailleerde informatie over daguerreotypieën bevat. 
     Leden kunnen records van individuele daguerreotypieën bekijken, bewerken en opslaan en relaties 

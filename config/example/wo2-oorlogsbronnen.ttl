@@ -13,6 +13,8 @@ erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
   sdo:identifier "wo2-oorlogsbronnen" ;
   sdo:creator <http://oorlogsbronnen.nl> ;  
   sdo:name "Beeldbank WO2 Oorlogsbronnen" ;
+  # Optionele cover voor de collectiekaart op de startpagina:
+  sdo:image <https://images.memorix.nl/niod/thumb/1000x1000/b6551ea8-1459-f683-1a08-36a4cc94d055.jpg> ;
   sdo:description """
     Beeldbank WO2 Oorlogsbronnen is een beeldbank met afbeeldingen van de Tweede Wereldoorlog 
     uit de collectie van WO2 Oorlogsbronnen. 
@@ -71,7 +73,7 @@ erfgoedflix:WO2-Oorlogsbronnen a sdo:WebPage ;
 
  <https://www.ldmax.nl> a sdo:Organization ;
   sdo:name "LDMax" ;
-  sdo:logo "https://www.ldmax.nl/ldmax-logo.svg"^^xsd:anyURI ;
+  sdo:logo "/images/ldmax-logo.svg"^^xsd:anyURI ;
   sdo:description """
     [LDMax](https://www.ldmax.nl) LDMax is een one-stop applicatie gericht op gebruiksgemak voor de instelling die Linked Data wil publiceren.
 

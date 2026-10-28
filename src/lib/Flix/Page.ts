@@ -3,6 +3,8 @@ import type Flix from '#lib/Flix.js';
 import ns from './namespaces';
 import ArchivalObject from './ArchivalObject';
 import { Engine } from './Engine';
+import { plainTextHtml } from '../server/flix/plainText.js';
+import { iri } from '../stories/contract.js';
 import { marked } from 'marked';
 export default class Page {
 
@@ -17,8 +19,17 @@ export default class Page {
     return this.flix.getProperty(this.page, ns.sdo.identifier)
   }
 
+  public get headline(): string | undefined {
+    return this.flix.getProperty(this.page, ns.sdo.headline);
+  }
+
+  public get coverImage(): string | undefined {
+    return this.flix.getProperty(this.page, ns.sdo.image);
+  }
+
   public get description() {
     const description = this.flix.getProperty(this.page, ns.sdo.description)
+    if (this.flix.getProperty(this.page, ns.flix.managedStory) === 'true') return plainTextHtml(description ?? '');
     return description
       ? marked.parse(description.trim().replace(/^\s+/gm, ''), { async: false})
       : description
@@ -31,7 +42,7 @@ export default class Page {
 
   public async getArchivalObject(subject: string): Promise<ArchivalObject | undefined> {
     const engine = new Engine(this.flix);
-    const result = await engine.query(this.page, { replace: (rq) => rq.replaceAll('#{ITEM_FILTER}', `filter(?heritageObject = <${subject}>)`)});
+    const result = await engine.query(this.page, { replace: (rq) => rq.replaceAll('#{ITEM_FILTER}', `filter(?heritageObject = ${iri(subject)})`)});
     if (result.length === 0) {
       return undefined;
     }
@@ -42,7 +53,9 @@ export default class Page {
     return {
       name: this.name,
       identifier: this.identifier,
-      description: this.description
+      description: this.description,
+      coverImage: this.coverImage,
+      headline: this.headline
     };
   }
 }

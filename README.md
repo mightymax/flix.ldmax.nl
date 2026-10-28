@@ -1,4 +1,7 @@
 # LDMax SPARQL Flix
+
+Voor onderhoud en hervatting: zie [projectstatus en architectuur](docs/project-status.md) en [werkafspraken voor agents](AGENTS.md).
+
 Inspired by the [NDE Heritage FLix](https://github.com/netwerk-digitaal-erfgoed/heritageflix), this project aims to create a simple but visualy attractive website using SPARQL queries. Although this projectes uses [LDMax](https://ldmax.nl) SPARQL endpoints, you can build your own Flix using any publicaly available SPARQL endpoint. The configuration if the entire project is done in RDF, see the [./config/config.example.nl](example configuration).
 
 > [!NOTE]
@@ -8,6 +11,9 @@ Inspired by the [NDE Heritage FLix](https://github.com/netwerk-digitaal-erfgoed/
 A demo of this project is available via https://erfgoedflix.nl.
 
 ## Install
+
+Gebruik Node.js 24 (`nvm use`, zie `.nvmrc`).
+
 To run a local development Flix, follow these steps:
 ```bash
 git clone https://github.com:mightymax/flix.ldmax.nl.git
@@ -18,6 +24,24 @@ npm run dev -- --open
 ```
 
 This wil open your browser at http://localhost:5173 with the provided example configuration based on [WO2 Oorlogsbronnen](http://oorlogsbronnen.nl).
+
+## Ontwikkelen en controleren
+
+```sh
+npm run check:config                       # meegeleverde voorbeeldconfiguratie
+npm run check:config -- config/config.ttl  # eigen configuratie
+npm test                                  # lokale regressietests, geen endpoints nodig
+npm run check
+npm run lint
+npm run build
+```
+
+De configuratiecontrole controleert de root, identifiers binnen dezelfde bovenliggende
+pagina, query-instellingen en CONSTRUCT-querybestanden zonder externe endpoints te
+benaderen. Include- en querypaden blijven relatief aan de projectroot. Herhaalde
+includes en cycli worden eenmaal ingelezen. De controle bevestigt geen bereikbaarheid
+van endpoints of afbeeldingen. De GitHub-workflow `Checks` voert deze controles uit
+op pull requests en pushes naar `main`.
 
 ## Using Docker
 Using the example configuration:
@@ -47,3 +71,32 @@ Een mislukte build wijzigt de releasebranch niet.
 De container gebruikt `config/config.example.ttl` als standaard wanneer het lokale,
 door Git genegeerde `config/config.ttl` ontbreekt. Houd productieconfiguratie dus
 in versiebeheer (of configureer daarvoor expliciet een mount).
+
+## Coverafbeelding per collectie
+
+Voeg `sdo:image` toe aan de collectienode in de RDF-configuratie, naast `sdo:name`:
+
+```turtle
+sdo:name "Mijn collectie" ;
+sdo:headline "Verhalen die blijven" ;
+sdo:image <https://jouw-server.nl/cover.jpg> ;
+```
+
+De startpagina toont de collectietitel over de cover. Zonder afbeelding of bij een
+laadfout blijft de titel zichtbaar op de grafische achtergrond. Het WO2-voorbeeld
+bevat een cover; Daguerreobase laat de variant zonder cover zien. Herstart de
+server na een RDF-configuratiewijziging, omdat configuratie per proces wordt geladen.
+
+Optioneel vervangt `sdo:headline` de subtitel “Een venster op het verleden” op de
+collectiekaart. Zonder headline, of bij een lege waarde, blijft die standaardtekst staan.
+
+## Verhalen uit LDMax
+
+De optionele koppeling via `FLIX_REPOSITORY_URL` en de LDMax-beheeromgeving zijn
+beschreven in [LDMax-verhalen](docs/ldmax-verhalen.md), inclusief databaseactivatie,
+publicatierechten, AI-suggesties en NDE/IIIF-ondersteuning.
+
+Een afzonderlijk verhaal kun je direct bekijken via
+`/bekijk?url=<URL-gecodeerde LDMax-verhaallink>`. In de LDMax-beheeromgeving maakt
+**Opslaan en voorbeeld maken** ook een tijdelijke link voor een ongepubliceerd
+concept. Zie [directe voorbeeldlinks](docs/ldmax-verhalen.md#direct-bekijken-via-een-ldmax-verhaallink).
