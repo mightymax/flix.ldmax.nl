@@ -42,3 +42,11 @@ test('readable story URLs accept RDF extensions and verify organisation and slug
   await assert.rejects(fetchLinkedStory(new URL(canonical + '-wrong'), async () => Response.json({story})), /ander verhaal/);
   assert.throws(() => storyLink(canonical.replace('platform.ldmax.nl', 'attacker.example')));
 });
+
+test('accepts the production www.ldmax.nl story origin without accepting lookalike hosts', async () => {
+  const canonical = 'https://www.ldmax.nl/organisaties/museum/verhalen/portretten';
+  assert.equal(storyLink(canonical).href, canonical);
+  assert.equal((await fetchLinkedStory(storyLink(canonical), async () => Response.json({story}))).story.id, id);
+  for (const host of ['www.ldmax.nl.attacker.example', 'www-ldmax.nl', 'attacker.example']) assert.throws(() => storyLink(canonical.replace('www.ldmax.nl', host)));
+  assert.throws(() => storyLink(canonical.replace('https:', 'http:')));
+});
