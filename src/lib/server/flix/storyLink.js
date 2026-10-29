@@ -12,7 +12,7 @@ export const storyContextSchema = z.object({url: z.string().max(4000), identifie
  */
 export function storyLink(input, options = {}) {
   const url = new URL(input);
-  const origins = new Set(['https://www.ldmax.nl', 'https://platform.ldmax.nl']);
+  const origins = new Set(['https://www.ldmax.nl', 'https://ldmax.nl']);
   if (options.repository) origins.add(new URL(options.repository).origin);
   for (const origin of (options.origins ?? '').split(',').map(value => value.trim()).filter(Boolean)) origins.add(new URL(origin).origin);
   if (options.development) {
