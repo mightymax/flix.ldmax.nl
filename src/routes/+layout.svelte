@@ -1,5 +1,6 @@
 <script lang="ts">
   import '../app.css';
+  import SocialMetadata from '#lib/components/SocialMetadata.svelte';
   import { page } from '$app/state';
   import { afterNavigate } from '$app/navigation';
   import { asset, resolve } from '$app/paths';
@@ -16,6 +17,7 @@
 </script>
 
 <svelte:window onkeydown={(event) => { if (event.key === 'Escape') menuOpen = false; }} />
+<SocialMetadata />
 <a class="skip-link" href="#main-content">Direct naar inhoud</a>
 <header class="site-header" data-sveltekit-reload={data.hasStoryLink}>
   <div class="header-inner">

@@ -61,3 +61,19 @@ or configuration values.
   or add full search and additional result pages.
 
 These are historical checks, not verification of the current documentation update.
+
+## Social sharing metadata
+
+A shared `SocialMetadata` component renders Open Graph and Twitter card metadata
+in the initial HTML. Titles, plain-text descriptions and images follow the current
+story, theme or object. Story covers take precedence over carousel images; theme
+and object pages reuse images already loaded for the page, with no extra SPARQL
+queries. The homepage and pages without a suitable image use the bundled
+1200 × 630 PNG at `static/images/social-preview.png`.
+
+Canonical URLs and image URLs are absolute and use the request origin, including
+SvelteKit's configured asset paths. Canonical URLs omit query parameters and
+fragments. Session-only story previews carry `noindex, nofollow`; they cannot be
+shared as public previews. Social networks may cache earlier previews and require
+a fresh inspection after deployment. Remote image availability and crawler access
+remain dependent on the source institution.

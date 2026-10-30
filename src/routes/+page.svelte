@@ -7,7 +7,7 @@
   let search = $state('');
   const stories = $derived(data.flixers.filter(story => `${story.name ?? ''} ${story.headline ?? ''}`.toLocaleLowerCase('nl').includes(search.trim().toLocaleLowerCase('nl'))));
 </script>
-<svelte:head><title>Ontdek de verhalen — Erfgoedflix</title><meta name="description" content="Ontdek erfgoed in beeld. Blader door open verhalen, historische fotografie en verhalen uit het verleden." /></svelte:head>
+<svelte:head><title>Ontdek de verhalen — Erfgoedflix</title></svelte:head>
 <div class="page-width home-page">
   <section class="home-intro">
     <p class="eyebrow"><span class="accent-line"></span> Een andere kijk op vroeger</p>

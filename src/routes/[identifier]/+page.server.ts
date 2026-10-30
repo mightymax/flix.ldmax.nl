@@ -11,6 +11,8 @@ export const load = async ({ locals, params }) => {
   return {
     name: subFlix.name,
     logo: subFlix.logo,
+    description: subFlix.description,
+    coverImage: flix.pages.find(page => page.identifier === params.identifier)?.coverImage,
     carouselItems,
     identifier: params.identifier,
     pages: pages.map(p => p.toJSON()) };

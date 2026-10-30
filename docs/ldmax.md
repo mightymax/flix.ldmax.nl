@@ -160,8 +160,10 @@ operators should follow [self-hosting](self-hosting.md). The GitHub release
 workflow and Kubernetes overlays contain the upstream registry and infrastructure;
 adapt them before using them in a fork.
 
-The maintainer checkout is `~/Code/cluster/flix.ldmax.nl`. Commit and push changes
-to `main` before an explicitly requested release:
+The maintainer checkout is `~/Code/cluster/flix.ldmax.nl`. Commit changes on `main` before an explicitly requested release. Local commits
+may be ahead of `origin/main`; a separate push is not required. The preversion
+check fetches `origin/main` and refuses a dirty working tree, another branch, or
+remote commits that have not been integrated locally:
 
 ```sh
 npm version patch  # or minor / major
