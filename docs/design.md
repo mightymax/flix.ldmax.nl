@@ -1,30 +1,63 @@
-# Vormgeving Erfgoedflix
+# ErfgoedFlix design
 
-De interface gebruikt een warme archiefstijl met een lichte canvasachtergrond en een donkergroene nachtmodus. Koraal markeert acties en actieve navigatie. Serifkoppen geven de beeldpresentatie een redactioneel karakter; de navigatie gebruikt het lokale sans-seriflettertype. Er worden geen externe webfonts geladen.
+The interface uses a warm archive-inspired style with a light canvas background
+and dark green night mode. Coral highlights actions and active navigation. Serif
+headings give the image presentation an editorial character; navigation uses a
+local sans-serif font. No external web fonts are loaded.
 
-## Structuur
+## Structure
 
-- De rootlayout verzorgt de gedeelde header, collectienavigatie, themaschakelaar, informatiemodal en footer.
-- De collectielayout toont een tweede navigatieniveau met collectieoverzicht en thema's. Op mobiel blijft dit horizontaal scrollbaar.
-- De startpagina introduceert de collecties met collectiekaarten waarop de volledige collectietitel staat. Een optionele `sdo:headline` vervangt de kaartsubtitel “Een venster op het verleden”. Een optionele `sdo:image` op de collectienode levert de cover; zonder cover of bij een laadfout blijft de grafische achtergrond zichtbaar. Deze vereist geen extra SPARQL-requests voor covers.
-- De collectiepagina toont een handmatig bediende fotohero, themasnelkoppelingen en beeldrijen. Geen automatische beweging; reduced-motion wordt gerespecteerd.
-- Categorieën hebben een responsief beeldraster met titels. De teller vermeldt het aantal geladen beelden, niet het totaal in de bron.
-- Objectdetails tonen de volledige afbeelding naast metadata, op mobiel onder elkaar. CONSTRUCT-metadata blijft zichtbaar als de aanvullende bindingsquery geen gegevens oplevert.
+- The root layout provides the shared header, collection navigation, theme
+  switcher, information modal and footer.
+- The collection layout adds collection and category navigation, horizontally
+  scrollable on mobile.
+- Home-page collection cards show full titles. Optional `sdo:headline` overrides
+  the default subtitle; `sdo:image` supplies the cover. A missing or failed image
+  leaves the graphic background visible. Covers require no additional SPARQL query.
+- Collection pages show a manually controlled image hero, category shortcuts and
+  image rows. There is no automatic movement; reduced-motion preferences are respected.
+- Category pages use a responsive image grid with titles. The counter reports
+  loaded images, not the total at the source.
+- Object details place the full image beside metadata, stacked on mobile.
+  CONSTRUCT metadata remains visible when the additional bindings query returns nothing.
 
-## Onderdelen en afspraken
+## Components and conventions
 
-`src/app.css` bevat de kleurvariabelen en gedeelde responsieve vormgeving. De `dark`-klasse op het html-element activeert de nachtmodus. Flowbite DarkMode volgt bij het eerste bezoek de systeemvoorkeur en bewaart een handmatige keuze lokaal; de rootlayout houdt deze bediening beschikbaar tijdens navigatie. Flowbite Modal verzorgt de collectie-informatie.
+`src/app.css` defines colours and shared responsive styling. A `dark` class on the
+HTML element activates night mode. Flowbite DarkMode initially follows system
+preferences and stores manual choices locally. The root layout keeps the switch
+available during navigation. Flowbite Modal presents collection information.
 
-`Artwork.svelte` toont een terugval bij ontbrekende of onbereikbare beelden. `ImageScroller.svelte` gebruikt gewone links, horizontale swipe-/scrollbediening en knoppen. De collectiepagina resolveert en encodeert object-IRI's voordat links aan de scroller worden doorgegeven.
+`Artwork.svelte` provides a fallback for missing or unreachable images.
+`ImageScroller.svelte` uses ordinary links, horizontal swipe/scroll interaction
+and buttons. Collection pages resolve and encode object IRIs before passing links
+to the scroller.
 
-Previews reageren op de huidige collectie. Requests worden bij navigatie geannuleerd; lege resultaten en laadfouten zijn zichtbaar. Bij een fout kan de bezoeker opnieuw proberen. Gedeelde objectmetadata staat in `src/lib/types.ts`.
+Previews follow the current collection. Requests are cancelled during navigation;
+empty results and loading errors are visible, with retry available after an error.
+Shared object metadata types live in `src/lib/types.ts`.
 
-Configuratiebeschrijvingen zijn bestaande Markdown/HTML uit door de beheerder gecontroleerde RDF-bestanden. Zij worden nog als HTML weergegeven; maak deze bron niet publiek bewerkbaar zonder sanitization. Foutpagina's tonen geen ruwe HTML-foutmeldingen meer.
+Local configuration descriptions contain administrator-controlled Markdown/HTML
+and are rendered as HTML. Do not expose these files for public editing without
+sanitization. Error pages no longer render raw HTML error messages.
 
-## Controle op 27 oktober 2026
+The documentation wordmark is in `docs/assets/erfgoedflix.svg`. It uses the same
+dark green, warm light background colour and coral accent, with the product name
+consistently written as **ErfgoedFlix**. It does not change application branding
+or configuration values.
 
-- Typecontrole, lint, productiebuild, zeven regressietests en offline configuratiecontrole slagen.
-- In de browser: beide collecties geopend; WO2-collectie → Bevrijding → objectdetail gecontroleerd, inclusief echte afbeeldingen en metadata.
-- Dag-/nachtwisseling, nachtmodus na herladen, informatiemodal en navigatie gecontroleerd.
-- Op 390px: mobiel menu geopend en via collectielink gesloten; collectie- en detailweergave bekeken. Geen horizontale pagina-overloop gemeten op de collectiepagina.
-- De bestaande SPARQL-paginering en bindingsconversie zijn niet herschreven. De nieuwe UI voegt geen volledige zoekfunctie of extra resultaatpagina's toe.
+## Verification recorded on 27 October 2026
+
+- Type checking, lint, production build, seven regression tests and offline
+  configuration validation passed at that time.
+- Browser checks covered both collections and WO2 → Bevrijding → object details,
+  including live images and metadata.
+- Day/night switching, persistence after reload, information modal and navigation
+  were checked.
+- At 390px, the mobile menu opened and closed through collection navigation;
+  collection and detail layouts were inspected. No horizontal page overflow was
+  measured on the collection page.
+- The design changes did not rewrite SPARQL pagination or bindings conversion,
+  or add full search and additional result pages.
+
+These are historical checks, not verification of the current documentation update.

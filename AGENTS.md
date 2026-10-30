@@ -1,30 +1,52 @@
-# Werken aan Erfgoedflix
+# Working on ErfgoedFlix
 
-Dit project maakt configureerbare erfgoedbeeldbanken met RDF-configuratie en SPARQL. Lees eerst `docs/project-status.md` voor architectuur, bekende problemen en vervolgstappen.
+This project builds configurable heritage image collections using RDF configuration
+and SPARQL. Read `docs/project-status.md` first for architecture, known issues and
+next steps. Write documentation in English and use the product name **ErfgoedFlix**.
 
-## Werkwijze
+## Workflow
 
-- Werk in kleine, controleerbare stappen. Behoud RDF-configuratie en bestaande publieke routes bij refactors.
-- Controleer eerst `git status`; behoud wijzigingen van de gebruiker.
-- Gebruik de officiële Svelte MCP-server bij Svelte/SvelteKit-werk en Flowbite-documentatie bij componentwijzigingen. Gebruik Svelte 5-runes en Flowbite-Svelte waar passend. Controleer gewijzigde componenten met de Svelte-autofixer.
-- Raadpleeg `/Users/marklindeman/Code/LDMax/platform.ldmax.nl` voor bestaande Svelte-, Tailwind- en Flowbite-patronen. Die repo is standaard referentie; wijzig hem alleen bij een expliciete opdracht voor de koppeling of platformwerk. Voor de verhalenintegratie is die opdracht gegeven; zie `docs/ldmax-verhalen.md`. Neem versiegebonden configuratie niet blind over: Flix gebruikt SvelteKit 3, platform momenteel SvelteKit 2.
-- Houd filesystem-, RDF-configuratie- en SPARQL-uitvoering op de server. Geef eenvoudige, expliciet getypeerde objecten terug aan de UI.
-- Voeg bij wijzigingen aan querylogica en configuratieladen gerichte regressietests met lokale fixtures toe. Externe endpoints zijn geen betrouwbare basis voor unit-tests.
-- Voer bij codewijzigingen `npm run check`, `npm run lint` en `npm run build` uit. Rapporteer afzonderlijk wat runtime en in de browser is gecontroleerd.
-- Gebruik Node 24 (`nvm use`). Voer ook `npm test` en `npm run check:config` uit bij wijzigingen aan configuratie of backend. De tests gebruiken de ingebouwde Node-test runner en lokale fixtures.
-- Werk documentatie bij wanneer architectuur, commando's of bekende beperkingen veranderen.
+- Work in small, reviewable steps. Preserve RDF configuration and existing public
+  routes during refactors.
+- Check `git status` first and preserve the user's changes.
+- Use the official Svelte MCP server for Svelte/SvelteKit work and Flowbite
+  documentation for component changes. Use Svelte 5 runes and Flowbite-Svelte
+  where appropriate. Check changed components with the Svelte autofixer.
+- Follow the reference-repository guidance in `docs/ldmax.md#upstream-development`
+  for existing Svelte, Tailwind and Flowbite patterns, platform version differences
+  and the scope of authorised integration work.
+- Keep filesystem access, RDF configuration and SPARQL execution on the server.
+  Return simple, explicitly typed objects to the UI.
+- Add focused regression tests with local fixtures when changing query logic or
+  configuration loading. External endpoints are not a reliable basis for unit tests.
+- For code changes, run `npm run check`, `npm run lint` and `npm run build`.
+  Report runtime and browser verification separately.
+- Use Node 24 (`nvm use`). Also run `npm test` and `npm run check:config` when
+  changing configuration or the backend. Tests use Node's built-in runner and
+  local fixtures.
+- Update documentation when architecture, commands or known limitations change.
 
-## Developmentserver
+## Development server
 
-- Controleer eerst of er al een server voor deze repo draait, inclusief de werkdirectory van het proces. Andere projecten kunnen poort 5173 gebruiken.
-- Lokaal is `config/config.ttl` nodig. Maak die uitsluitend als hij ontbreekt met een kopie van `config/config.example.ttl`; overschrijf geen lokale configuratie.
-- Start indien nodig met `npm run dev -- --host 127.0.0.1`, kies een vrije poort en deel de werkelijke URL.
-- Laat een gestarte developmentserver altijd draaien zodat Mark in zijn browser kan meekijken. Stop of herstart geen servers van andere projecten.
-- Voor Flix is geen `ENV=production` vereist; dat is een afspraak van platform, geen Flix-configuratie.
+- First check for an existing server for this repository, including the process's
+  working directory. Other projects may use port 5173.
+- Local operation requires `config/config.ttl`. Only create it if missing, by
+  copying `config/config.example.ttl`; never overwrite local configuration.
+- If needed, start `npm run dev -- --host 127.0.0.1`, choose an available port and
+  share the actual URL.
+- Always leave a development server you start running so Mark can inspect it.
+  Do not stop or restart other projects' servers.
+- ErfgoedFlix does not require `ENV=production`; integration-specific environment
+  conventions are documented separately in `docs/ldmax.md`.
 
-## Configuratie en releases
+## Configuration and releases
 
-- `config/config.ttl` is genegeerd door Git. Lees geen secrets voor documentatie en commit geen lokale configuratie of credentials.
-- `/config.ttl` publiceert momenteel de samengevoegde RDF-configuratie. Zet daar dus geen geheimen in.
-- `npm version` pusht via `postversion` automatisch naar main en activeert deployment. Gebruik dit alleen bij een expliciete releaseopdracht.
-- Releases bouwen een ARM64-container naar GHCR; de workflow werkt de `release`-branch bij en Argo CD verzorgt deployment. Zie README en `.github/workflows/release.yml`.
+- Git ignores `config/config.ttl`. Do not read secrets for documentation or commit
+  local configuration or credentials.
+- `/config.ttl` currently publishes the merged RDF configuration. Never put secrets
+  in it.
+- `npm version` automatically pushes to `main` through `postversion` and triggers
+  deployment. Use it only for an explicit release request.
+- Upstream releases build an ARM64 container in GHCR, update the `release` branch
+  and deploy through Argo CD. See `docs/ldmax.md#upstream-releases` and
+  `.github/workflows/release.yml`.

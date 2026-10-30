@@ -351,15 +351,15 @@ h1,h2,h3,p {
 }
 .home-intro {
   position: relative;
-  padding-block: 90px 85px;
+  padding-block: 36px;
   border-bottom: 1px solid var(--line);
 }
 .home-intro h1 {
-  font-size: clamp(55px, 7vw, 100px);
+  font-size: clamp(36px, 4.5vw, 60px);
   font-weight: 500;
-  letter-spacing: -5px;
+  letter-spacing: -2px;
   line-height: 1.05;
-  margin-block: 28px;
+  margin-block: 16px;
 }
 .home-intro h1 em {
   font-family: Georgia, serif;
@@ -367,7 +367,7 @@ h1,h2,h3,p {
   color: var(--accent);
 }
 .home-intro .text-link {
-  margin-top: 25px;
+  margin-top: 14px;
 }
 .intro-index {
   position: absolute;
@@ -1063,7 +1063,7 @@ h1,h2,h3,p {
     font-size: 11px;
   }
   .home-intro {
-    padding-block: 60px;
+    padding-block: 32px;
   }
   .home-intro h1 {
     letter-spacing: -3px;
@@ -1141,7 +1141,8 @@ h1,h2,h3,p {
     gap: 24px;
   }
   .home-intro h1 {
-    font-size: 58px;
+    font-size: 36px;
+    letter-spacing: -1px;
   }
   .intro-copy {
     font-size: 14px;
@@ -1295,3 +1296,9 @@ h1,h2,h3,p {
 
 .story-preview-banner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 12px clamp(22px, 4.5vw, 72px); background: var(--accent-soft); color: var(--ink); font-size: 12px; }
 .story-preview-banner a { text-decoration: underline; text-underline-offset: 3px; }
+
+.story-filter { max-width: 32rem; margin-block: 1.5rem 1rem; }
+.story-result-count { margin-bottom: 1.5rem; }
+.story-search-results { display: grid; gap: .5rem; max-height: 50vh; overflow-y: auto; margin-top: 1rem; }
+.story-search-results a { padding: .75rem; border-bottom: 1px solid var(--line); }
+.story-search-results a:hover, .story-search-results [aria-current=page] { color: var(--accent); }

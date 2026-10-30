@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="120" viewBox="0 0 640 120" role="img" aria-labelledby="title">
+  <title id="title">ErfgoedFlix</title>
+  <rect width="640" height="120" rx="18" fill="#143d32"/>
+  <g transform="translate(24 24)" fill="none" stroke="#f7f1e5" stroke-width="3">
+    <rect width="72" height="72" rx="8"/>
+    <path d="M0 15h72M0 57h72M17 0v15M36 0v15M55 0v15M17 57v15M36 57v15M55 57v15"/>
+    <path d="m29 25 20 11-20 11z" fill="#ed846c" stroke="#ed846c" stroke-linejoin="round"/>
+  </g>
+  <text x="118" y="79" fill="#f7f1e5" font-family="Georgia, serif" font-size="57" font-weight="bold">ErfgoedFlix<tspan fill="#ed846c">.</tspan></text>
+</svg>

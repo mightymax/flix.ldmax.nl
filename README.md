@@ -1,112 +1,66 @@
-# LDMax SPARQL Flix
+<p align="center"><img src="docs/assets/erfgoedflix.svg" alt="ErfgoedFlix" width="480"></p>
 
-Voor onderhoud en hervatting: zie [projectstatus en architectuur](docs/project-status.md) en [werkafspraken voor agents](AGENTS.md).
+# ErfgoedFlix
 
-Inspired by the [NDE Heritage FLix](https://github.com/netwerk-digitaal-erfgoed/heritageflix), this project aims to create a simple but visualy attractive website using SPARQL queries. Although this projectes uses [LDMax](https://ldmax.nl) SPARQL endpoints, you can build your own Flix using any publicaly available SPARQL endpoint. The configuration if the entire project is done in RDF, see the [./config/config.example.nl](example configuration).
+Build your own visual heritage collection website with RDF configuration and
+SPARQL queries. ErfgoedFlix connects to public SPARQL endpoints and presents
+collections, categories and object details. You can host it independently with
+your own branding and data sources, without an account or application database.
 
-> [!NOTE]
->
-> This is a work-in-progress project. The aim is to provide a simple to use tool to create images-based websites based on SPARQL queries only.
+Inspired by [NDE HeritageFlix](https://github.com/netwerk-digitaal-erfgoed/heritageflix).
+Explore the [demo](https://erfgoedflix.nl).
 
-A demo of this project is available via https://erfgoedflix.nl.
+## Get started
 
-## Install
+Read the [self-hosting guide](docs/self-hosting.md) for installation, production
+hosting with Node or Docker, HTTPS, updates and troubleshooting. See
+[RDF configuration](docs/configuration.md) to create your own collections and queries.
 
-Gebruik Node.js 24 (`nvm use`, zie `.nvmrc`).
-
-To run a local development Flix, follow these steps:
-```bash
-git clone https://github.com:mightymax/flix.ldmax.nl.git
-cd flix.ldmax.nl
-cp config/config.example.ttl config/config.ttl
-npm install
-npm run dev -- --open
-```
-
-This wil open your browser at http://localhost:5173 with the provided example configuration based on [WO2 Oorlogsbronnen](http://oorlogsbronnen.nl).
-
-## Ontwikkelen en controleren
+To try the examples locally, install Git and Node.js 24 (see [.nvmrc](.nvmrc)):
 
 ```sh
-npm run check:config                       # meegeleverde voorbeeldconfiguratie
-npm run check:config -- config/config.ttl  # eigen configuratie
-npm test                                  # lokale regressietests, geen endpoints nodig
+git clone https://github.com/mightymax/flix.ldmax.nl.git
+cd flix.ldmax.nl
+nvm use
+npm ci
+# Only create the local configuration if it does not already exist:
+test -f config/config.ttl || cp config/config.example.ttl config/config.ttl
+npm run check:config -- config/config.ttl
+npm run dev -- --host 127.0.0.1
+```
+
+Open the URL printed by Vite, normally `http://127.0.0.1:5173`. The examples use
+WO2 Oorlogsbronnen and Daguerreobase. Image results require access to their external
+SPARQL endpoints and image servers.
+
+## Development
+
+```sh
+npm run check:config                       # bundled example configuration
+npm run check:config -- config/config.ttl  # your local configuration
+npm test                                  # local fixtures; no endpoints required
 npm run check
 npm run lint
 npm run build
 ```
 
-De configuratiecontrole controleert de root, identifiers binnen dezelfde bovenliggende
-pagina, query-instellingen en CONSTRUCT-querybestanden zonder externe endpoints te
-benaderen. Include- en querypaden blijven relatief aan de projectroot. Herhaalde
-includes en cycli worden eenmaal ingelezen. De controle bevestigt geen bereikbaarheid
-van endpoints of afbeeldingen. De GitHub-workflow `Checks` voert deze controles uit
-op pull requests en pushes naar `main`.
+Configuration validation does not test endpoint or image availability. The
+`Checks` GitHub workflow runs the project checks on pull requests and pushes to
+`main`. See [project status](docs/project-status.md), [design](docs/design.md) and
+[contributor instructions](AGENTS.md) for architecture and maintenance guidance.
 
-## Using Docker
-Using the example configuration:
-```bash
-docker run -it --rm -p 3000:3000 ghcr.io/mightymax/erfgoedflix-app
-``` 
+## Integrations and upstream operations
 
-## Releases en deployment
+The optional [LDMax integration](docs/ldmax.md) provides a remote story catalogue
+and preview links. It is not required for a standalone installation. The same
+document records upstream-specific development and deployment details.
 
-Werkmap: `~/Code/cluster/flix.ldmax.nl`. Commit en push wijzigingen eerst naar `main`.
+## Licence
 
-```sh
-npm version patch  # of minor / major
-```
+Copyright © 2026 Mark Lindeman and contributors.
 
-Dit maakt een versiecommit en v-tag en pusht beide automatisch naar GitHub. De
-releaseworkflow bouwt uitsluitend `linux/arm64`, publiceert naar
-`ghcr.io/mightymax/erfgoedflix-app` en schrijft de versie plus image-digest naar
-`infrastructure/overlays/prod/kustomization.yaml` op de branch `release`.
-Argo CD volgt die branch en synchroniseert automatisch. Geen handmatige build,
-`kubectl apply` of rollout restart nodig. Secrets blijven buiten Git.
-
-Controle: `gh run list --workflow release.yml` en
-`kubectl -n argocd get application erfgoedflix`.
-Een mislukte build wijzigt de releasebranch niet.
-
-De container gebruikt `config/config.example.ttl` als standaard wanneer het lokale,
-door Git genegeerde `config/config.ttl` ontbreekt. Houd productieconfiguratie dus
-in versiebeheer (of configureer daarvoor expliciet een mount).
-
-## Coverafbeelding per collectie
-
-Voeg `sdo:image` toe aan de collectienode in de RDF-configuratie, naast `sdo:name`:
-
-```turtle
-sdo:name "Mijn collectie" ;
-sdo:headline "Verhalen die blijven" ;
-sdo:image <https://jouw-server.nl/cover.jpg> ;
-```
-
-De startpagina toont de collectietitel over de cover. Zonder afbeelding of bij een
-laadfout blijft de titel zichtbaar op de grafische achtergrond. Het WO2-voorbeeld
-bevat een cover; Daguerreobase laat de variant zonder cover zien. Herstart de
-server na een RDF-configuratiewijziging, omdat configuratie per proces wordt geladen.
-
-Optioneel vervangt `sdo:headline` de subtitel “Een venster op het verleden” op de
-collectiekaart. Zonder headline, of bij een lege waarde, blijft die standaardtekst staan.
-
-## Verhalen uit LDMax
-
-De optionele koppeling via `FLIX_REPOSITORY_URL` en de LDMax-beheeromgeving zijn
-beschreven in [LDMax-verhalen](docs/ldmax-verhalen.md), inclusief databaseactivatie,
-publicatierechten, AI-suggesties en NDE/IIIF-ondersteuning.
-
-Een afzonderlijk verhaal kun je direct bekijken via
-`/bekijk?url=<URL-gecodeerde LDMax-verhaallink>`. In de LDMax-beheeromgeving maakt
-**Opslaan en voorbeeld maken** ook een tijdelijke link voor een ongepubliceerd
-concept. Zie [directe voorbeeldlinks](docs/ldmax-verhalen.md#direct-bekijken-via-een-ldmax-verhaallink).
-
-### Publieke LDMax-catalogus
-
-De publieke verhalenpagina en RDF-repository staan op `https://www.ldmax.nl/verhalen`. Na het uitrollen van die LDMax-route gebruikt ErfgoedFlix de catalogus met:
-
-```env
-FLIX_REPOSITORY_URL=https://www.ldmax.nl/verhalen
-```
-
-De repository wordt als Turtle ingelezen, met automatische paginering en één minuut cache. `/verhalen.ttl` en `/verhalen.jsonld` zijn ook beschikbaar. Zie [de verhalenintegratie](docs/ldmax-verhalen.md) voor import en uitrolvolgorde en development.
+ErfgoedFlix is licensed under the **European Union Public Licence 1.2 (EUPL-1.2)**.
+See [LICENSE](LICENSE) for the complete text and the
+[official EUPL resources](https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12).
+Third-party dependencies retain their own licences. Heritage data and images
+remain subject to their source licences and rights.

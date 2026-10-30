@@ -1,7 +1,8 @@
 {
 	"name": "flix.ldmax.nl",
-	"description": "Enspired by the [NDE Heritage FLix](https://github.com/netwerk-digitaal-erfgoed/heritageflix), this project aims to create a simple but visualy attractive website using SPARQL queries.",
+	"description": "ErfgoedFlix: configurable visual heritage collections powered by RDF and SPARQL.",
 	"private": true,
+	"license": "EUPL-1.2",
 	"author": {
 		"name": "Mark Lindeman",
 		"email": "mark@lindeman.it"
