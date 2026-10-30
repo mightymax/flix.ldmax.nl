@@ -4,4 +4,5 @@ resources:
   - manifest.yaml
 images:
   - name: ghcr.io/mightymax/erfgoedflix-app
-    newTag: latest
+    newTag: v1.0.1
+    digest: sha256:75cb4b6b8f06ff3d27e26a4b8a0c46a7d1cdf4c8db515a461348d7653f01029e
