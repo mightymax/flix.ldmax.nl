@@ -16,6 +16,9 @@ spec:
       containers:
       - name: erfgoedflix
         image: ghcr.io/mightymax/erfgoedflix-app:latest
+        env:
+        - name: FLIX_REPOSITORY_URL
+          value: https://www.ldmax.nl/verhalen
         ports:
         - containerPort: 3000
       imagePullSecrets:

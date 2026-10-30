@@ -17,12 +17,17 @@ export const selectionSchema = z.object({
 export const themeSchema = z.object({
   id: storySlug, title: z.string().trim().min(1).max(200),
   description: z.string().max(4000).default(''), selection: selectionSchema,
-  selectionQuery: z.string().trim().min(1).max(16000).optional()
+  selectionQuery: z.string().trim().min(1).max(16000).optional(),
+  constructQuery: z.string().trim().min(1).max(24000).optional()
 }).strict();
 export const storyDraftSchema = z.object({
-  version: z.literal(2), slug: storySlug, title: z.string().trim().min(1).max(200),
+  version: z.literal(2).default(2), slug: storySlug, title: z.string().trim().min(1).max(200),
   headline: z.string().max(300).default(''), description: z.string().max(10000).default(''),
   coverImage: z.union([webUrl, z.literal('')]).default(''),
+  legacyIdentifier: z.string().regex(/^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$/).max(100).optional(),
+  carouselQuery: z.string().min(1).max(24000).optional(),
+  creator: z.object({url: webUrl, name: z.string().max(200), description: z.string().max(10000).default(''), logo: z.union([webUrl, z.literal('')]).default('')}).strict().optional(),
+  dateCreated: z.string().datetime().optional(), dateModified: z.string().datetime().optional(),
   themes: z.array(themeSchema).min(1).max(12)
 }).strict().refine(value => new Set(value.themes.map(theme => theme.id)).size === value.themes.length, 'Theme identifiers must be unique');
 export const publishedStorySchema = z.object({

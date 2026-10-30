@@ -1,5 +1,9 @@
 # Projectverkenning — 27 oktober 2026
 
+## Publieke catalogus en import — 30 oktober 2026
+
+LDMax heeft nu `/verhalen` als publieke HTML/RDF-catalogus. ErfgoedFlix leest de repository als native RDF met `FLIX_REPOSITORY_URL=https://www.ldmax.nl/verhalen`. De twee lokale verhalen zijn naar de productie-database overgezet, met hun oorspronkelijke bronqueries, carrousels en route-aliases; overige experimentele verhalen zijn op verzoek verwijderd na een lokale backup. Er is geen extra versie- of compatibiliteitslaag toegevoegd. Nieuwe code is lokaal getest en moet nog worden uitgerold; eerst LDMax, daarna ErfgoedFlix. Zie `docs/ldmax-verhalen.md`.
+
 ## Verhalenintegratie
 
 De verhalenfunctionaliteit werkt op organisatieniveau, zonder datasetkeuze of `isPartOf`-filter. Contractversie 2 gebruikt de geregistreerde openbare organisatiebron. Een eerste implementatie in beide repos staat beschreven in `docs/ldmax-verhalen.md`. De databasemigratie is uitgevoerd met `ENV=production`; live activering van de repository en de volledige acceptatietest moeten nog volgen.

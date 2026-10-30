@@ -1,5 +1,5 @@
 import type RDF from '@rdfjs/types';
-import { Store, Writer } from 'n3';
+import { Store, Writer, DataFactory } from 'n3';
 import ns from '#lib/Flix/namespaces.js';
 import { marked } from "marked";
 import { loadConfiguration } from './server/flix/configuration.js';
@@ -116,7 +116,7 @@ export default class Flix {
       ]
       .find(subject => {
         const id = this.store.getObjects(subject, ns.sdo.identifier, null).shift()?.value;
-        return id === identifier;
+        return id === identifier || this.store.getObjects(subject, DataFactory.namedNode('https://erfgoedflix.nl/vocabulary#legacyIdentifier'), null).some(alias => alias.value === identifier);
       })
     if (subFlix) {
       if (subFlix.termType !== 'NamedNode' && subFlix.termType !== 'BlankNode') {

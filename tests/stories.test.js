@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Parser, Store } from 'n3';
+import { Parser, Store, Writer } from 'n3';
 import { QueryEngine } from '@comunica/query-sparql';
 import sparqljs from 'sparqljs';
 import { storyDraftSchema, repositorySchema, storyQuery, discoveryQuery, previewQuery, iri } from '../src/lib/stories/contract.js';
+import {repositoryDataset, readRepositoryRdf} from '../src/lib/stories/repositoryRdf.js';
 import { repositoryConfiguration, fetchRepository } from '../src/lib/server/flix/repository.js';
 import { mediaFromQuads, isPresentationManifest } from '../src/lib/server/flix/media.js';
 import { plainTextHtml } from '../src/lib/server/flix/plainText.js';
@@ -63,14 +64,23 @@ test('repository generates only inline queries, isolates story routes and escape
   assert.equal(config.store.getQuads(null, 'https://erfgoedflix.nl/vocabulary#loadConfig', null, null).length, 0);
   assert.equal(plainTextHtml('<script>bad()</script>'), '<p>&lt;script&gt;bad()&lt;/script&gt;</p>');
 });
-test('repository follows bounded pagination and rejects repeating pages and duplicates', async () => {
+async function rdfResponse(repository, target = 'https://platform.example/verhalen') {
+  const {store} = repositoryDataset(repository, String(target));
+  const writer = new Writer(); writer.addQuads(store.getQuads(null,null,null,null));
+  const text = await new Promise((resolve,reject) => writer.end((e,t) => e ? reject(e) : resolve(t)));
+  return new Response(text, {headers: {'Content-Type': 'text/turtle'}});
+}
+test('repository reads RDF with bounded pagination and rejects repeating pages and duplicate IDs', async () => {
   let calls = 0;
-  const result = await fetchRepository('https://platform.example/api/verhalen', async () => Response.json({version: 2, stories: ++calls === 1 ? [story] : [], nextOffset: calls === 1 ? 50 : null}));
-  assert.equal(result.length, 1);
-  assert.equal(calls, 2);
-  await assert.rejects(fetchRepository('https://platform.example/api/verhalen', async () => Response.json({version: 2, stories: [], nextOffset: 0})), /pagination/);
-  await assert.rejects(fetchRepository('https://platform.example/api/verhalen', async () => Response.json({version: 2, stories: [story, story], nextOffset: null})), /Duplicate/);
-  await assert.rejects(fetchRepository('https://platform.example/api/verhalen', async () => new Response('', {status: 503})), /503/);
+  const result = await fetchRepository('https://platform.example/verhalen', async (url, options) => {
+    assert.ok(options.headers.Accept.includes('text/turtle'));
+    return rdfResponse({version: 2, stories: ++calls === 1 ? [story] : [], nextOffset: calls === 1 ? 50 : null}, url);
+  });
+  assert.equal(result.length, 1); assert.equal(calls, 2);
+  await assert.rejects(fetchRepository('https://platform.example/verhalen', url => rdfResponse({version: 2, stories: [], nextOffset: 0}, url)), /pagination/);
+  await assert.rejects(fetchRepository('https://platform.example/verhalen', url => rdfResponse({version: 2, stories: [story, {...story, config: {...story.config, slug: 'another'}}], nextOffset: null}, url)), /Duplicate/);
+  await assert.rejects(fetchRepository('https://platform.example/verhalen', async () => new Response('', {status: 503})), /503/);
+  await assert.rejects(fetchRepository('https://platform.example/verhalen', async () => Response.json({version: 2, stories: [], nextOffset: null})), /Linked Data/);
 });
 test('IIIF manifest detection uses declared media format, not guessed image paths', () => {
   assert.equal(isPresentationManifest('application/ld+json;profile="http://iiif.io/api/presentation/3/context.json"'), true);
@@ -107,4 +117,27 @@ test('paging preserves manual subquery limits and text containing LIMIT/OFFSET',
   assert.ok(generated.includes('OFFSET 1'));
   assert.ok(generated.includes('LIMIT 10'));
   assert.ok(generated.includes('OFFSET 20'));
+});
+
+test('native RDF roundtrips ordered themes, literal/IRI filters, source and manual queries', async () => {
+  const selectionQuery = 'SELECT DISTINCT ?heritageObject WHERE {?heritageObject ?p "quoted\\ntext"}';
+  const config = storyDraftSchema.parse({...draft, themes: [{...draft.themes[0], selectionQuery}, {id: 'second', title: 'Tweede', selection: {property: 'keywords', kind: 'literal', value: 'Een "term"'}}]});
+  const response = await rdfResponse({version: 2, stories: [{...story, config}], nextOffset: null});
+  const text = await response.text();
+  assert.ok(!text.includes('configuration'));
+  assert.deepEqual(readRepositoryRdf(text, 'https://platform.example/verhalen').stories[0].config, config);
+  await assert.rejects(fetchRepository('https://platform.example/verhalen', async () => new Response(text.replaceAll('https://platform.example/organisaties/museum/verhalen/portretten', 'https://attacker.example/other'), {headers: {'Content-Type': 'text/turtle'}})), /identity/);
+});
+
+import {execFileSync} from 'node:child_process';
+test('legacy export preserves all eight source mappings, carousel metadata and native RDF', async () => {
+  const legacy = JSON.parse(execFileSync(process.execPath, ['scripts/export-legacy-stories.js'], {encoding: 'utf8'}));
+  assert.deepEqual(legacy.map(s => [s.organisation, s.config.slug, s.config.themes.length]), [['wo2net', 'wo2-oorlogsbronnen', 4], ['nederlands-fotomuseum-daguerreobase', 'daguerreobase', 4]]);
+  const stories = legacy.map((entry, i) => ({...story, id: i ? 'a52cc86b-f98b-4483-a01c-7e2e44eff737' : story.id, organisation: entry.organisation, config: entry.config}));
+  const response = await rdfResponse({version: 2, stories, nextOffset: null});
+  const parsed = readRepositoryRdf(await response.text(), 'https://platform.example/verhalen');
+  assert.deepEqual(parsed.stories.map(s => s.config), legacy.map(s => s.config));
+  const config = repositoryConfiguration(parsed.stories);
+  assert.equal(config.store.getQuads(null, 'https://comunica.dev/vocabulary#query', null, null).length, 10);
+  assert.equal(config.store.getQuads(null, 'https://erfgoedflix.nl/vocabulary#legacyIdentifier', null, null).length, 2);
 });

@@ -100,3 +100,13 @@ Een afzonderlijk verhaal kun je direct bekijken via
 `/bekijk?url=<URL-gecodeerde LDMax-verhaallink>`. In de LDMax-beheeromgeving maakt
 **Opslaan en voorbeeld maken** ook een tijdelijke link voor een ongepubliceerd
 concept. Zie [directe voorbeeldlinks](docs/ldmax-verhalen.md#direct-bekijken-via-een-ldmax-verhaallink).
+
+### Publieke LDMax-catalogus
+
+De publieke verhalenpagina en RDF-repository staan op `https://www.ldmax.nl/verhalen`. Na het uitrollen van die LDMax-route gebruikt ErfgoedFlix de catalogus met:
+
+```env
+FLIX_REPOSITORY_URL=https://www.ldmax.nl/verhalen
+```
+
+De repository wordt als Turtle ingelezen, met automatische paginering en één minuut cache. `/verhalen.ttl` en `/verhalen.jsonld` zijn ook beschikbaar. Zie [de verhalenintegratie](docs/ldmax-verhalen.md) voor import en uitrolvolgorde en development.

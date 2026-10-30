@@ -32,3 +32,31 @@ export function embeddedSelectionQuery(query) {
   parsed.prefixes = {};
   return new sparqljs.Generator().stringify(parsed);
 }
+
+/** Preserve legacy metadata mappings without permitting remote services or writes.
+ * @param {string} query @param {boolean} [requireObject] */
+export function validateConstructQuery(query, requireObject = true) {
+  let parsed;
+  try {parsed = new sparqljs.Parser().parse(query);} catch {throw new Error('Ongeldige CONSTRUCT-query.');}
+  if (parsed.type !== 'query' || parsed.queryType !== 'CONSTRUCT') throw new Error('Gebruik een CONSTRUCT-query.');
+  /** @param {unknown} value */
+  function inspect(value) {
+    if (!value || typeof value !== 'object') return;
+    const node = /** @type {Record<string, unknown>} */ (value);
+    if (node.type === 'service' || node.from) throw new Error('SERVICE en FROM zijn niet toegestaan.');
+    Object.values(node).forEach(child => Array.isArray(child) ? child.forEach(inspect) : inspect(child));
+  }
+  inspect(parsed);
+  if (requireObject && !parsed.template?.some(t => t.subject.termType === 'Variable' && t.subject.value === 'heritageObject')) throw new Error('De query moet ?heritageObject beschrijven.');
+  return query;
+}
+/** Preview legacy CONSTRUCT mappings through the existing read-only SELECT service.
+ * @param {string} query */
+export function constructPreviewQuery(query) {
+  validateConstructQuery(query);
+  const parsed = new sparqljs.Parser().parse(query);
+  if (parsed.type !== 'query' || parsed.queryType !== 'CONSTRUCT') throw new Error('Ongeldige query.');
+  const variables = [{termType: 'Variable', value: 'heritageObject'}, {termType: 'Variable', value: 'name'},
+    {expression: {termType: 'Variable', value: 'imageUrl'}, variable: {termType: 'Variable', value: 'thumbnail'}}];
+  return new sparqljs.Generator().stringify(/** @type {import('sparqljs').SelectQuery} */ (/** @type {unknown} */ ({type: 'query', queryType: 'SELECT', prefixes: parsed.prefixes, distinct: true, variables, where: parsed.where, limit: 5})));
+}

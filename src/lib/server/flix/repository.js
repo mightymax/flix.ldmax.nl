@@ -1,6 +1,7 @@
-import {validateSelectionQuery} from '../../stories/selectionQuery.js';
+import {readRepositoryRdf} from '../../stories/repositoryRdf.js';
+import {validateSelectionQuery, validateConstructQuery} from '../../stories/selectionQuery.js';
 import { DataFactory, Store } from 'n3';
-import { publishedStorySchema, repositorySchema, storyQuery } from '../../stories/contract.js';
+import { publishedStorySchema, storyQuery } from '../../stories/contract.js';
 const { namedNode, literal } = DataFactory;
 /** @param {string} name */
 const sdo = name => namedNode(`https://schema.org/${name}`);
@@ -18,7 +19,7 @@ export async function fetchRepository(url, fetcher = fetch) {
     const target = new URL(url);
     target.searchParams.set('offset', String(offset));
     target.searchParams.set('limit', '50');
-    const response = await fetcher(target, { headers: { Accept: 'application/json' }, redirect: 'error', signal: AbortSignal.timeout(10000) });
+    const response = await fetcher(target, { headers: { Accept: 'text/turtle, application/n-triples;q=0.9, application/trig;q=0.8, application/n-quads;q=0.7' }, redirect: 'error', signal: AbortSignal.timeout(10000) });
     if (!response.ok) { await response.body?.cancel(); throw new Error(`Story repository returned ${response.status}`); }
     const reader = response.body?.getReader();
     if (!reader) throw new Error('Empty story repository response');
@@ -33,7 +34,9 @@ export async function fetchRepository(url, fetcher = fetch) {
         chunks.push(chunk.value);
       }
     } finally { reader.releaseLock(); }
-    const body = repositorySchema.parse(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+    const format = response.headers.get('content-type')?.split(';')[0].trim();
+    if (!format || !['text/turtle', 'application/n-triples', 'application/trig', 'application/n-quads', 'text/n3'].includes(format)) throw new Error('Expected a Linked Data story repository');
+    const body = readRepositoryRdf(Buffer.concat(chunks).toString('utf8'), target.href, format);
     stories.push(...body.stories);
     if (body.nextOffset === null) {
       if (new Set(stories.map(story => story.id)).size !== stories.length) throw new Error('Duplicate stories in repository');
@@ -66,7 +69,10 @@ export function repositoryConfiguration(stories) {
     addText(node, 'headline', story.config.headline);
     addText(node, 'description', story.config.description);
     addText(node, 'image', story.config.coverImage);
-    store.addQuad(node, flix('managedStory'), literal('true'));
+    if (story.config.carouselQuery) store.addQuad(settings, comunica('query'), literal(validateConstructQuery(story.config.carouselQuery, false)));
+    else store.addQuad(node, flix('managedStory'), literal('true'));
+    if (story.config.legacyIdentifier) store.addQuad(node, flix('legacyIdentifier'), literal(story.config.legacyIdentifier));
+    if (story.config.creator) {const creator = namedNode(story.config.creator.url); store.addQuad(node, sdo('creator'), creator); addText(creator, 'name', story.config.creator.name); addText(creator, 'description', story.config.creator.description); addText(creator, 'logo', story.config.creator.logo);}
     store.addQuad(node, comunica('settings'), settings);
     store.addQuad(settings, comunica('source'), literal(story.source.endpoint));
     // This settings node supports the existing metadata lookup on the detail page.
@@ -81,7 +87,7 @@ export function repositoryConfiguration(stories) {
       addText(themeNode, 'description', theme.description);
       store.addQuad(themeNode, comunica('settings'), themeSettings);
       store.addQuad(themeSettings, comunica('source'), literal(story.source.endpoint));
-      store.addQuad(themeSettings, comunica('query'), literal(storyQuery(theme.selection, theme.selectionQuery ? validateSelectionQuery(theme.selectionQuery) : undefined)));
+      store.addQuad(themeSettings, comunica('query'), literal(theme.constructQuery ? validateConstructQuery(theme.constructQuery) : storyQuery(theme.selection, theme.selectionQuery ? validateSelectionQuery(theme.selectionQuery) : undefined)));
     }
   }
   return { store, root, files: [] };
