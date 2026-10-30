@@ -10,8 +10,8 @@ SPARQL queries and visitors' browsers retrieve images from their sources.
 Install Git and Node.js 24 as specified in `.nvmrc` (currently 24.21.0). With nvm:
 
 ```sh
-git clone https://github.com/mightymax/flix.ldmax.nl.git
-cd flix.ldmax.nl
+git clone https://github.com/mightymax/ErfgoedFlix.git
+cd ErfgoedFlix
 nvm use
 npm ci
 test -f config/config.ttl || cp config/config.example.ttl config/config.ttl

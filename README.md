@@ -19,8 +19,8 @@ hosting with Node or Docker, HTTPS, updates and troubleshooting. See
 To try the examples locally, install Git and Node.js 24 (see [.nvmrc](.nvmrc)):
 
 ```sh
-git clone https://github.com/mightymax/flix.ldmax.nl.git
-cd flix.ldmax.nl
+git clone https://github.com/mightymax/ErfgoedFlix.git
+cd ErfgoedFlix
 nvm use
 npm ci
 # Only create the local configuration if it does not already exist:
