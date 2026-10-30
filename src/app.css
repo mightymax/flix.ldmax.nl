@@ -140,22 +140,10 @@ a, button {
   color: var(--accent);
 }
 .brand-mark {
-  background: var(--accent);
-  color: var(--canvas);
-  width: 34px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Georgia, serif;
-  font-style: italic;
-  font-size: 28px;
-  letter-spacing: -6px;
-  padding-right: 6px;
-  border-radius: 3px;
-}
-.brand-mark span {
-  transform: translateY(2px);
+  width: 42px;
+  height: 44px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 .desktop-nav {
   display: flex;

@@ -1,10 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="640" height="120" viewBox="0 0 640 120" role="img" aria-labelledby="title">
   <title id="title">ErfgoedFlix</title>
   <rect width="640" height="120" rx="18" fill="#143d32"/>
-  <g transform="translate(24 24)" fill="none" stroke="#f7f1e5" stroke-width="3">
-    <rect width="72" height="72" rx="8"/>
-    <path d="M0 15h72M0 57h72M17 0v15M36 0v15M55 0v15M17 57v15M36 57v15M55 57v15"/>
-    <path d="m29 25 20 11-20 11z" fill="#ed846c" stroke="#ed846c" stroke-linejoin="round"/>
-  </g>
+  <g transform="translate(20 18) scale(1.3)">
+  <rect x="9" y="7" width="43" height="49" rx="6" transform="rotate(-9 9 7)" fill="#d9a18c"/>
+  <rect x="14" y="9" width="43" height="49" rx="6" transform="rotate(6 14 9)" fill="#e9cbb7"/>
+  <rect x="12" y="9" width="44" height="50" rx="6" fill="#b74830"/>
+  <path d="M19 49V33a15 15 0 0 1 30 0v16" stroke="#fff8e9" stroke-width="3"/>
+  <path d="M25 49V34a9 9 0 0 1 18 0v15" fill="#fff8e9"/>
+  <path d="m25 45 8-8 10 8v4H25z" fill="#b74830"/>
+  <circle cx="36" cy="31" r="3" fill="#b74830"/>
+  <path d="M19 53h30" stroke="#fff8e9" stroke-width="2" stroke-linecap="round"/>
+</g>
   <text x="118" y="79" fill="#f7f1e5" font-family="Georgia, serif" font-size="57" font-weight="bold">ErfgoedFlix<tspan fill="#ed846c">.</tspan></text>
 </svg>

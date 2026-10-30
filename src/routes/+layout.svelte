@@ -2,7 +2,7 @@
   import '../app.css';
   import { page } from '$app/state';
   import { afterNavigate } from '$app/navigation';
-  import { resolve } from '$app/paths';
+  import { asset, resolve } from '$app/paths';
   import { DarkMode, Modal, Input } from 'flowbite-svelte';
   import { ArrowUpRightFromSquareOutline, BarsOutline, CloseOutline } from 'flowbite-svelte-icons';
   let { children, data } = $props();
@@ -20,7 +20,7 @@
 <header class="site-header" data-sveltekit-reload={data.hasStoryLink}>
   <div class="header-inner">
     <a href={resolve('/')} class="brand" aria-label="Erfgoedflix — alle verhalen">
-      <span class="brand-mark" aria-hidden="true">e<span>f</span></span>
+      <img class="brand-mark" src={asset('images/erfgoedflix-mark.svg')} alt="" aria-hidden="true" />
       <span>erfgoed<span class="brand-light">flix</span><span class="brand-dot">.</span></span>
     </a>
     <nav class="desktop-nav" aria-label="Verhalen">
